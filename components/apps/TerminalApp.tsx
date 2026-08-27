@@ -23,7 +23,7 @@ const COMMANDS: Record<string, (args: string[]) => string> = {
   whoami: () => `${profile.fullName} — ${profile.title}\n${profile.college} (${profile.year})`,
   skills: () => profile.skills.join("  ·  "),
   projects: () =>
-    profile.projects.map((p) => `• ${p.name} — ${p.tags.slice(0, 3).join(", ")}`).join("\n"),
+    profile.projects.map((p) => `• ${p.name}`).join("\n"),
   experience: () =>
     profile.experience
       .map((job) => `• ${job.role} @ ${job.org}\n  ${job.period}`)

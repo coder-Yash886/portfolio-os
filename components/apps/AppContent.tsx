@@ -136,35 +136,109 @@ function AboutSection() {
 }
 
 function ProjectsSection() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const project = profile.projects.find((p) => p.slug === selected);
+
+  if (project) {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() => setSelected(null)}
+          className="mb-5 flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        >
+          <span aria-hidden>←</span> Back to Projects
+        </button>
+        <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          {project.name}
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-[15px]">
+          {project.description}
+        </p>
+        <h2 className="mt-6 text-sm font-semibold text-white sm:text-base">Tech Stack</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-[color:var(--accent)]/20 px-3 py-1 text-xs text-[color:var(--highlight)] sm:text-sm"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--accent)] px-4 py-2.5 text-sm font-semibold text-[color:var(--accent-fg)] hover:opacity-90"
+          >
+            <GitHubIcon />
+            View Code
+          </a>
+          {project.liveUrl ? (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[color:var(--highlight)] hover:bg-[color:var(--accent)]/20"
+            >
+              <ExternalIcon />
+              Live Demo
+            </a>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
         Projects
       </h1>
-      <div className="mt-5 space-y-4 sm:mt-6">
-        {profile.projects.map((project) => (
-          <article
-            key={project.name}
-            className="rounded-xl border border-[color:var(--border-subtle)] bg-white/5 p-4"
+      <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+        {profile.projects.map((item) => (
+          <button
+            key={item.slug}
+            type="button"
+            onClick={() => setSelected(item.slug)}
+            className="group flex flex-col items-center gap-2 text-center transition-transform hover:scale-[1.03]"
           >
-            <h2 className="text-base font-semibold text-white">{project.name}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-white/70">
-              {project.description}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-md bg-[color:var(--accent)]/15 px-2 py-0.5 text-[11px] text-[color:var(--accent)]"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </article>
+            <FolderIcon />
+            <span className="max-w-full truncate px-1 text-xs text-white/85 group-hover:text-white sm:text-sm">
+              {item.folderLabel}
+            </span>
+          </button>
         ))}
       </div>
     </div>
+  );
+}
+
+function FolderIcon() {
+  return (
+    <svg width="72" height="56" viewBox="0 0 72 56" aria-hidden className="drop-shadow-md">
+      <path d="M6 18h24l4 5h32v27H6V18z" fill="#b8b8b8" />
+      <path d="M6 12h24l4 5h32v6H6v-11z" fill="#3584e4" />
+      <rect x="22" y="30" width="28" height="3" rx="1.5" fill="#e8e8e8" opacity="0.9" />
+    </svg>
+  );
+}
+
+function GitHubIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.8c.85.004 1.71.115 2.51.337 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85 0 1.33-.01 2.4-.01 2.73 0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.523-4.477-10-10-10z" />
+    </svg>
+  );
+}
+
+function ExternalIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3" />
+    </svg>
   );
 }
 
