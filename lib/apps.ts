@@ -45,10 +45,10 @@ export const APPS: Record<AppId, AppDefinition> = {
   },
   store: {
     id: "store",
-    title: "App Library",
-    dockLabel: "Apps",
-    defaultSize: { width: 860, height: 560 },
-    minSize: { width: 640, height: 420 },
+    title: "App Store",
+    dockLabel: "App Center",
+    defaultSize: { width: 920, height: 600 },
+    minSize: { width: 680, height: 440 },
   },
   "about-portfolio": {
     id: "about-portfolio",
