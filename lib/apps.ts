@@ -24,8 +24,8 @@ export const APPS: Record<AppId, AppDefinition> = {
   },
   browser: {
     id: "browser",
-    title: "Browser",
-    dockLabel: "Browser",
+    title: "Chrome",
+    dockLabel: "Chrome",
     defaultSize: { width: 980, height: 640 },
     minSize: { width: 720, height: 480 },
   },

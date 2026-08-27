@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import type { AppId } from "@/lib/apps";
+import { BrowserApp } from "@/components/apps/BrowserApp";
+import { EditorApp } from "@/components/apps/EditorApp";
+import { StoreApp } from "@/components/apps/StoreApp";
+import { TerminalApp } from "@/components/apps/TerminalApp";
 import { profile } from "@/data/profile";
 
 const FILE_SECTIONS = ["About Me", "Projects", "Experience", "Contact"] as const;
@@ -14,19 +18,18 @@ export function AppContent({ appId }: Props) {
   switch (appId) {
     case "files":
       return <FilesApp />;
+    case "browser":
+      return <BrowserApp />;
+    case "editor":
+      return <EditorApp />;
     case "terminal":
       return <TerminalApp />;
+    case "store":
+      return <StoreApp />;
     case "about-portfolio":
       return <AboutApp />;
     default:
-      return (
-        <div className="flex h-full min-h-[200px] items-center justify-center p-4 text-center text-white/60 sm:p-8">
-          <div>
-            <p className="text-base font-medium text-white/85 sm:text-lg">{appId}</p>
-            <p className="mt-2 text-sm">Coming in the next commit.</p>
-          </div>
-        </div>
-      );
+      return null;
   }
 }
 
@@ -284,48 +287,6 @@ function ContactSection() {
           View Resume (PDF)
         </a>
       </div>
-    </div>
-  );
-}
-
-function TerminalApp() {
-  const host = profile.name.toLowerCase().replace(/\s+/g, "-");
-
-  return (
-    <div className="h-full min-h-[180px] overflow-x-auto bg-[#0b1220] p-3 font-[family-name:var(--font-mono)] text-xs leading-6 text-[#7dd3c7] sm:p-4 sm:text-sm">
-      <p className="whitespace-pre-wrap break-all">
-        <span className="text-white/50">guest@{host}-os</span>
-        <span className="text-white/30">:</span>
-        <span className="text-[#93c5fd]">~</span>
-        <span className="text-white/50">$ </span>
-        whoami
-      </p>
-      <p className="text-white/80">{profile.fullName} — {profile.title}</p>
-      <p className="mt-2 whitespace-pre-wrap break-all">
-        <span className="text-white/50">guest@{host}-os</span>
-        <span className="text-white/30">:</span>
-        <span className="text-[#93c5fd]">~</span>
-        <span className="text-white/50">$ </span>
-        cat college.txt
-      </p>
-      <p className="text-white/70">{profile.college} · {profile.year}</p>
-      <p className="mt-2 whitespace-pre-wrap break-all">
-        <span className="text-white/50">guest@{host}-os</span>
-        <span className="text-white/30">:</span>
-        <span className="text-[#93c5fd]">~</span>
-        <span className="text-white/50">$ </span>
-        ls projects/
-      </p>
-      <p className="text-white/70">nexora-ai  brain-dock  owasp-cve-lite-cli</p>
-      <p className="mt-2 whitespace-pre-wrap break-all">
-        <span className="text-white/50">guest@{host}-os</span>
-        <span className="text-white/30">:</span>
-        <span className="text-[#93c5fd]">~</span>
-        <span className="text-white/50">$ </span>
-        echo &quot;250+ LeetCode | 2★ CodeChef&quot;
-      </p>
-      <p className="text-white/80">250+ LeetCode | 2★ CodeChef (1458)</p>
-      <p className="mt-2 animate-pulse text-white/50">█</p>
     </div>
   );
 }
