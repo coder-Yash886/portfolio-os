@@ -45,6 +45,21 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
+button,
+a,
+[role="button"],
+label[for],
+summary {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="search"],
+textarea {
+  cursor: text;
+}
+
 .wallpaper-stage {
   position: absolute;
   inset: 0;

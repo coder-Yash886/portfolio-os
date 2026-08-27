@@ -8,9 +8,19 @@ export const profile = {
   github: "https://github.com/coder-Yash886",
   githubHandle: "@coder-Yash886",
   linkedin: "https://www.linkedin.com/in/yash-kumar-2a7076325/",
-  leetcode: "https://leetcode.com/u/coder-Yash886/",
-  codechef: "https://www.codechef.com/users/coder_yash886",
+  leetcode: "https://leetcode.com/u/Yk_coder886/",
+  codechef: "https://www.codechef.com/users/yash886",
   resumeUrl: "/resume.pdf",
+  ossSocietyUrl: "https://oss.akgec.ac.in",
+  aboutPortfolio: {
+    title: "About This Portfolio",
+    welcome:
+      "Welcome to my portfolio! This portfolio is my attempt at building a pixel-perfect UI inspired by my Ubuntu system. I'm trying to make it look and feel as close as possible to my actual desktop.",
+    journey:
+      "It took me several hours to create, and the journey of building it was both challenging and fun — I absolutely loved the process!",
+    future:
+      "There's still a lot of room for improvement, and I'm planning to make this project open source so that others can use it, contribute, and help it grow.",
+  },
   bookmarks: [
     { title: "GitHub", url: "https://github.com/coder-Yash886", desc: "Projects & open source" },
     { title: "LinkedIn", url: "https://www.linkedin.com/in/yash-kumar-2a7076325/", desc: "Professional profile" },
@@ -118,7 +128,7 @@ export const profile = {
       description:
         "Official website for the Open Source Society — the college technical society at Ajay Kumar Garg Engineering College. Built to showcase society events, team information, and registration flows with a modern responsive frontend and backend APIs for event management.",
       github: "https://github.com/coder-Yash886/oss-site",
-      liveUrl: "",
+      liveUrl: "https://oss.akgec.ac.in",
       tags: ["React", "Next.js", "Node.js", "Express", "MongoDB", "REST APIs", "JWT"],
     },
     {
@@ -136,7 +146,7 @@ export const profile = {
     {
       role: "Backend Developer",
       org: "Open Source Society",
-      orgUrl: "",
+      orgUrl: "https://oss.akgec.ac.in",
       period: "Jan 2025 — Present",
       location: "Ghaziabad, U.P.",
       points: [

@@ -530,15 +530,18 @@ function ContactSection() {
 
 function AboutApp() {
   return (
-    <div className="flex h-full min-h-[160px] flex-col items-start justify-center gap-2 p-4 sm:gap-3 sm:p-8">
-      <p className="font-[family-name:var(--font-display)] text-xl font-semibold text-white sm:text-2xl">
-        Portfolio OS
+    <div className="flex h-full min-h-[160px] flex-col gap-4 overflow-auto p-4 sm:gap-5 sm:p-8">
+      <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold text-white sm:text-2xl">
+        {profile.aboutPortfolio.title}
+      </h1>
+      <div className="max-w-lg space-y-4 text-sm leading-relaxed text-white/75 sm:text-[15px]">
+        <p>{profile.aboutPortfolio.welcome}</p>
+        <p>{profile.aboutPortfolio.journey}</p>
+        <p>{profile.aboutPortfolio.future}</p>
+      </div>
+      <p className="text-xs text-white/40">
+        Built by {profile.fullName} · {profile.college}
       </p>
-      <p className="max-w-md text-sm leading-relaxed text-white/70">
-        Interactive desktop portfolio for {profile.fullName} — {profile.title}.
-        Explore projects, experience, and contact info from the dock.
-      </p>
-      <p className="text-xs text-white/40">{profile.college}</p>
     </div>
   );
 }

@@ -52,7 +52,7 @@ export const APPS: Record<AppId, AppDefinition> = {
   },
   "about-portfolio": {
     id: "about-portfolio",
-    title: "About Portfolio OS",
+    title: "About This Portfolio",
     dockLabel: "About",
     defaultSize: { width: 520, height: 360 },
     minSize: { width: 400, height: 280 },
