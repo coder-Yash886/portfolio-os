@@ -2,6 +2,10 @@
 
 import { create } from "zustand";
 import { APPS, type AppId } from "@/lib/apps";
+import {
+  clampWindowPosition,
+  getWindowLayout,
+} from "@/lib/windowLayout";
 
 export type WindowState = {
   id: string;
@@ -28,15 +32,6 @@ type DesktopStore = {
   moveWindow: (id: string, x: number, y: number) => void;
   resizeWindow: (id: string, width: number, height: number) => void;
 };
-
-function centeredPosition(width: number, height: number) {
-  if (typeof window === "undefined") {
-    return { x: 120, y: 80 };
-  }
-  const x = Math.max(72, Math.round((window.innerWidth - width) / 2));
-  const y = Math.max(48, Math.round((window.innerHeight - height) / 2) - 24);
-  return { x, y };
-}
 
 export const useDesktopStore = create<DesktopStore>((set, get) => ({
   windows: [],
@@ -69,7 +64,7 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
     }
 
     const app = APPS[appId];
-    const { x, y } = centeredPosition(app.defaultSize.width, app.defaultSize.height);
+    const layout = getWindowLayout(app);
     const id = `${appId}-${Date.now()}`;
     const zIndex = get().nextZ;
 
@@ -80,12 +75,12 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
           id,
           appId,
           title: app.title,
-          x,
-          y,
-          width: app.defaultSize.width,
-          height: app.defaultSize.height,
+          x: layout.x,
+          y: layout.y,
+          width: layout.width,
+          height: layout.height,
           minimized: false,
-          maximized: false,
+          maximized: layout.maximized,
           zIndex,
         },
       ],
@@ -128,9 +123,16 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
     })),
 
   moveWindow: (id, x, y) =>
-    set((state) => ({
-      windows: state.windows.map((w) => (w.id === id ? { ...w, x, y } : w)),
-    })),
+    set((state) => {
+      const win = state.windows.find((w) => w.id === id);
+      if (!win || win.maximized) return state;
+      const pos = clampWindowPosition(win.width, win.height, x, y);
+      return {
+        windows: state.windows.map((w) =>
+          w.id === id ? { ...w, x: pos.x, y: pos.y } : w,
+        ),
+      };
+    }),
 
   resizeWindow: (id, width, height) =>
     set((state) => ({

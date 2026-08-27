@@ -1,0 +1,76 @@
+import type { AppDefinition } from "@/lib/apps";
+
+const TOP_BAR = 32;
+const DOCK_MOBILE = 88;
+const DOCK_DESKTOP = 96;
+
+export type ViewportInfo = {
+  width: number;
+  height: number;
+  isMobile: boolean;
+  isTablet: boolean;
+};
+
+export function getViewport(): ViewportInfo {
+  if (typeof window === "undefined") {
+    return { width: 1280, height: 800, isMobile: false, isTablet: false };
+  }
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  return {
+    width,
+    height,
+    isMobile: width < 640,
+    isTablet: width >= 640 && width < 1024,
+  };
+}
+
+export function getWindowLayout(app: AppDefinition) {
+  const { width: vw, height: vh, isMobile, isTablet } = getViewport();
+  const pad = isMobile ? 6 : 12;
+  const dock = isMobile ? DOCK_MOBILE : DOCK_DESKTOP;
+  const maxW = vw - pad * 2;
+  const maxH = vh - TOP_BAR - dock - pad;
+
+  if (isMobile) {
+    return {
+      x: pad,
+      y: TOP_BAR + pad / 2,
+      width: maxW,
+      height: maxH,
+      maximized: false,
+    };
+  }
+
+  const defaultW = isTablet
+    ? Math.min(app.defaultSize.width, vw * 0.92)
+    : app.defaultSize.width;
+  const defaultH = isTablet
+    ? Math.min(app.defaultSize.height, vh * 0.78)
+    : app.defaultSize.height;
+
+  const width = Math.min(Math.max(defaultW, app.minSize.width), maxW);
+  const height = Math.min(Math.max(defaultH, app.minSize.height), maxH);
+  const x = Math.max(pad, Math.round((vw - width) / 2));
+  const y = Math.max(TOP_BAR + pad / 2, Math.round((vh - height) / 2 - 8));
+
+  return { x, y, width, height, maximized: false };
+}
+
+export function clampWindowPosition(
+  winWidth: number,
+  winHeight: number,
+  x: number,
+  y: number,
+) {
+  const { width: vw, height: vh, isMobile } = getViewport();
+  const pad = isMobile ? 6 : 12;
+  const dock = isMobile ? DOCK_MOBILE : DOCK_DESKTOP;
+  const maxX = vw - winWidth - pad;
+  const maxY = vh - winHeight - dock;
+
+  return {
+    x: Math.min(Math.max(pad, x), Math.max(pad, maxX)),
+    y: Math.min(Math.max(TOP_BAR, y), Math.max(TOP_BAR, maxY)),
+  };
+}

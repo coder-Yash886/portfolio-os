@@ -24,7 +24,8 @@ export function Dock() {
   return (
     <nav
       aria-label="Application dock"
-      className="pointer-events-auto absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-end gap-1.5 rounded-2xl border border-[color:var(--border-subtle)] bg-[color:var(--dock)] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+      className="pointer-events-auto absolute bottom-2 left-1/2 z-50 flex max-w-[calc(100dvw-0.75rem)] -translate-x-1/2 items-end gap-1 overflow-x-auto rounded-2xl border border-[color:var(--border-subtle)] bg-[color:var(--dock)] px-1.5 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:bottom-4 sm:gap-1.5 sm:px-2.5 sm:py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}
     >
       {DOCK_ORDER.map((appId) => {
         const app = APPS[appId];
@@ -35,9 +36,9 @@ export function Dock() {
             type="button"
             onClick={() => openApp(appId)}
             title={app.dockLabel}
-            className="group relative flex h-12 w-12 flex-col items-center justify-center rounded-xl transition-transform duration-200 hover:-translate-y-1.5 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)]"
+            className="group relative flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl transition-transform duration-200 hover:-translate-y-1 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)] sm:h-12 sm:w-12 sm:hover:-translate-y-1.5"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-white/15 to-white/5 text-[color:var(--dock-icon)] shadow-inner">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-b from-white/15 to-white/5 text-[color:var(--dock-icon)] shadow-inner sm:h-9 sm:w-9">
               {ICONS[appId]}
             </span>
             <span

@@ -88,6 +88,16 @@ body {
   }
 }
 
+.desktop-workspace {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 640px) {
+  .desktop-workspace {
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .desktop-vignette {
   background:
     radial-gradient(ellipse 90% 80% at 58% 38%, transparent 45%, rgba(0, 0, 0, 0.35) 100%),

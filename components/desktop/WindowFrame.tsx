@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useIsMobile } from "@/hooks/useMedia";
 import type { WindowState } from "@/store/desktopStore";
 import { useDesktopStore } from "@/store/desktopStore";
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function WindowFrame({ window: win, children }: Props) {
+  const isMobile = useIsMobile();
   const focusWindow = useDesktopStore((s) => s.focusWindow);
   const closeWindow = useDesktopStore((s) => s.closeWindow);
   const minimizeWindow = useDesktopStore((s) => s.minimizeWindow);
@@ -22,8 +24,9 @@ export function WindowFrame({ window: win, children }: Props) {
   );
 
   const isFocused = focusedId === win.id;
+  const isFullscreen = win.maximized || isMobile;
 
-  const style: React.CSSProperties = win.maximized
+  const style: React.CSSProperties = isFullscreen
     ? {
         left: 0,
         top: 0,
@@ -40,7 +43,7 @@ export function WindowFrame({ window: win, children }: Props) {
       };
 
   function onPointerDownTitle(e: React.PointerEvent) {
-    if (win.maximized) return;
+    if (isFullscreen || isMobile) return;
     if ((e.target as HTMLElement).closest("button")) return;
     focusWindow(win.id);
     dragRef.current = {
@@ -68,7 +71,9 @@ export function WindowFrame({ window: win, children }: Props) {
       role="dialog"
       aria-label={win.title}
       onMouseDown={() => focusWindow(win.id)}
-      className={`pointer-events-auto absolute flex flex-col overflow-hidden rounded-xl border shadow-2xl transition-[box-shadow] ${
+      className={`pointer-events-auto absolute flex flex-col overflow-hidden shadow-2xl transition-[box-shadow] ${
+        isMobile ? "rounded-lg" : "rounded-xl"
+      } border ${
         isFocused
           ? "border-[color:var(--accent)]/25 shadow-[0_24px_80px_rgba(0,0,0,0.65)]"
           : "border-[color:var(--border-subtle)] opacity-[0.97]"
@@ -79,40 +84,60 @@ export function WindowFrame({ window: win, children }: Props) {
         onPointerDown={onPointerDownTitle}
         onPointerMove={onPointerMoveTitle}
         onPointerUp={onPointerUpTitle}
-        className="flex h-10 shrink-0 cursor-grab items-center justify-between border-b border-[color:var(--border-subtle)] bg-[color:var(--window-title)] px-3 active:cursor-grabbing"
+        className={`flex shrink-0 items-center justify-between border-b border-[color:var(--border-subtle)] bg-[color:var(--window-title)] px-2 sm:px-3 ${
+          isMobile ? "h-9 cursor-default" : "h-10 cursor-grab active:cursor-grabbing"
+        }`}
       >
-        <div className="flex items-center gap-2 text-sm font-medium text-white/90">
-          <span className="h-2 w-2 rounded-full bg-[color:var(--accent)]" />
-          {win.title}
+        <div className="flex min-w-0 items-center gap-2 text-xs font-medium text-white/90 sm:text-sm">
+          <span className="h-2 w-2 shrink-0 rounded-full bg-[color:var(--accent)]" />
+          <span className="truncate">{win.title}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-label="Minimize"
-            onClick={() => minimizeWindow(win.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-md text-white/70 hover:bg-white/10"
-          >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-              <rect y="5" width="12" height="2" rx="1" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            aria-label="Maximize"
-            onClick={() => toggleMaximize(win.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-md text-white/70 hover:bg-white/10"
-          >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
-            </svg>
-          </button>
+        <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+          {!isMobile && (
+            <button
+              type="button"
+              aria-label="Minimize"
+              onClick={() => minimizeWindow(win.id)}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-white/10 sm:h-7 sm:w-7"
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                <rect y="5" width="12" height="2" rx="1" />
+              </svg>
+            </button>
+          )}
+          {!isMobile && (
+            <button
+              type="button"
+              aria-label="Maximize"
+              onClick={() => toggleMaximize(win.id)}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-white/10 sm:h-7 sm:w-7"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
+              </svg>
+            </button>
+          )}
           <button
             type="button"
             aria-label="Close"
             onClick={() => closeWindow(win.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-md text-white/70 hover:bg-red-500/80 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-red-500/80 hover:text-white sm:h-7 sm:w-7"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+            >
               <path d="M2 2l8 8M10 2L2 10" />
             </svg>
           </button>

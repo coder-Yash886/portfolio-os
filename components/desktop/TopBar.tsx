@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { profile } from "@/data/profile";
 
-function formatClock(date: Date) {
+function formatClock(date: Date, short: boolean) {
+  if (short) {
+    return date.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
   return date.toLocaleString("en-US", {
     month: "short",
     day: "numeric",
@@ -14,31 +21,40 @@ function formatClock(date: Date) {
 }
 
 export function TopBar() {
-  const [now, setNow] = useState(() => formatClock(new Date()));
+  const [now, setNow] = useState(() => formatClock(new Date(), false));
+  const [shortClock, setShortClock] = useState(false);
 
   useEffect(() => {
-    const tick = () => setNow(formatClock(new Date()));
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setShortClock(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const tick = () => setNow(formatClock(new Date(), shortClock));
     tick();
     const id = window.setInterval(tick, 30_000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [shortClock]);
 
   return (
-    <header className="pointer-events-auto absolute inset-x-0 top-0 z-50 flex h-8 items-center justify-between bg-[color:var(--topbar)] px-3 text-[13px] text-[color:var(--topbar-fg)] backdrop-blur-md">
-      <div className="flex min-w-40 items-center gap-2 font-medium tracking-wide">
-        <span className="inline-flex h-4 w-4 items-center justify-center rounded-sm bg-[color:var(--accent)] text-[10px] font-bold text-[color:var(--accent-fg)]">
+    <header className="pointer-events-auto absolute inset-x-0 top-0 z-50 flex h-8 items-center justify-between bg-[color:var(--topbar)] px-2 text-xs text-[color:var(--topbar-fg)] backdrop-blur-md sm:px-3 sm:text-[13px]">
+      <div className="flex min-w-0 items-center gap-1.5 font-medium tracking-wide sm:gap-2 sm:min-w-28">
+        <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-[color:var(--accent)] text-[10px] font-bold text-[color:var(--accent-fg)]">
           Y
         </span>
-        <span>{profile.name} OS</span>
+        <span className="hidden truncate sm:inline">{profile.name} OS</span>
       </div>
       <time className="absolute left-1/2 -translate-x-1/2 tabular-nums tracking-wide">
         {now}
       </time>
-      <div className="flex min-w-40 items-center justify-end gap-3 text-[color:var(--topbar-muted)]">
+      <div className="flex min-w-0 shrink-0 items-center justify-end gap-2 text-[color:var(--topbar-muted)] sm:min-w-28 sm:gap-3">
         <span aria-label="Network" title="Online">
           <WifiIcon />
         </span>
-        <span aria-label="Volume" title="Volume">
+        <span className="hidden sm:inline" aria-label="Volume" title="Volume">
           <VolumeIcon />
         </span>
         <span aria-label="Battery" title="Battery">

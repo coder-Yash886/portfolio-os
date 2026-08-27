@@ -25,12 +25,12 @@ export function Desktop() {
 
       <TopBar />
 
-      <main className="absolute inset-0 pt-8 pb-24">
-        <div className="pointer-events-none absolute left-8 top-16 max-w-sm">
-          <p className="font-[family-name:var(--font-display)] text-4xl font-semibold tracking-tight text-white/90 drop-shadow-lg md:text-5xl">
+      <main className="desktop-workspace absolute inset-0 pt-8">
+        <div className="pointer-events-none absolute left-4 top-12 max-w-[min(100%,280px)] sm:left-8 sm:top-16 sm:max-w-sm">
+          <p className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white/90 drop-shadow-lg sm:text-4xl md:text-5xl">
             {profile.name}
           </p>
-          <p className="mt-2 text-sm text-white/65 drop-shadow md:text-base">
+          <p className="mt-1 text-xs text-white/65 drop-shadow sm:mt-2 sm:text-sm md:text-base">
             {profile.tagline}
           </p>
         </div>
