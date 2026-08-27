@@ -1,88 +1,280 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { profile } from "@/data/profile";
 
-type Bookmark = (typeof profile.bookmarks)[number];
+type Tab = {
+  id: string;
+  title: string;
+  url: string;
+};
+
+const HOME_URL = "https://www.google.com/webhp?igu=1";
+
+function newTab(url = HOME_URL, title = "New Tab"): Tab {
+  return { id: `tab-${Date.now()}-${Math.random()}`, title, url };
+}
 
 export function BrowserApp() {
-  const [active, setActive] = useState<Bookmark>(profile.bookmarks[0]);
+  const [tabs, setTabs] = useState<Tab[]>(() => {
+    const first = newTab();
+    return [first];
+  });
+  const [activeId, setActiveId] = useState(() => tabs[0]?.id ?? "");
+  const [address, setAddress] = useState(HOME_URL);
+
+  const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
+
+  const navigate = useCallback(
+    (raw: string) => {
+      let url = raw.trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url) && !url.startsWith("/")) {
+        url = `https://${url}`;
+      }
+
+      setTabs((prev) =>
+        prev.map((t) =>
+          t.id === activeId
+            ? {
+                ...t,
+                url,
+                title: url.includes("google.com") ? "New Tab" : bookmarkTitle(url),
+              }
+            : t,
+        ),
+      );
+      setAddress(url);
+    },
+    [activeId],
+  );
+
+  function addTab() {
+    const tab = newTab();
+    setTabs((prev) => [...prev, tab]);
+    setActiveId(tab.id);
+    setAddress(tab.url);
+  }
+
+  function closeTab(id: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (tabs.length === 1) return;
+    const idx = tabs.findIndex((t) => t.id === id);
+    const next = tabs.filter((t) => t.id !== id);
+    setTabs(next);
+    if (id === activeId) {
+      const fallback = next[Math.max(0, idx - 1)];
+      setActiveId(fallback.id);
+      setAddress(fallback.url);
+    }
+  }
+
+  function selectTab(tab: Tab) {
+    setActiveId(tab.id);
+    setAddress(tab.url);
+  }
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#1a1a1e]">
-      <div className="flex items-center gap-2 border-b border-white/10 bg-[#252529] px-2 py-2 sm:px-3">
-        <div className="flex gap-1">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-          <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-          <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
+    <div className="flex h-full min-h-0 flex-col bg-[#202124] text-[#e8eaed]">
+      {/* Tab strip */}
+      <div className="flex shrink-0 items-end gap-0.5 bg-[#202124] px-1 pt-1">
+        {tabs.map((tab) => {
+          const isActive = tab.id === activeId;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => selectTab(tab)}
+              className={`group flex max-w-[180px] min-w-[100px] flex-1 items-center gap-1.5 rounded-t-lg px-2 py-1.5 text-xs sm:max-w-[220px] sm:px-3 sm:text-sm ${
+                isActive
+                  ? "bg-[#35363a] text-white"
+                  : "bg-transparent text-white/60 hover:bg-white/5"
+              }`}
+            >
+              <ChromeTabIcon />
+              <span className="min-w-0 flex-1 truncate text-left">{tab.title}</span>
+              {tabs.length > 1 && (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => closeTab(tab.id, e)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") closeTab(tab.id, e as unknown as React.MouseEvent);
+                  }}
+                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full opacity-0 hover:bg-white/15 group-hover:opacity-100"
+                  aria-label="Close tab"
+                >
+                  <CloseIcon />
+                </span>
+              )}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={addTab}
+          aria-label="New tab"
+          className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/60 hover:bg-white/10"
+        >
+          <PlusIcon />
+        </button>
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex shrink-0 items-center gap-1 border-b border-black/30 bg-[#35363a] px-2 py-1.5 sm:gap-2 sm:px-3">
+        <div className="flex items-center gap-0.5 sm:gap-1">
+          <ToolbarBtn label="Back" disabled>
+            <BackIcon />
+          </ToolbarBtn>
+          <ToolbarBtn label="Forward" disabled>
+            <ForwardIcon />
+          </ToolbarBtn>
+          <ToolbarBtn label="Reload" onClick={() => navigate(active.url)}>
+            <ReloadIcon />
+          </ToolbarBtn>
         </div>
-        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg bg-[#1a1a1e] px-3 py-1.5 text-xs text-white/70 sm:text-sm">
-          <span className="text-white/40">🔒</span>
-          <span className="truncate">{active.url.replace(/^https?:\/\//, "")}</span>
+
+        <form
+          className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#202124] px-3 py-1.5 sm:px-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            navigate(address);
+          }}
+        >
+          <LockIcon />
+          <input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="min-w-0 flex-1 bg-transparent text-xs text-white/90 outline-none sm:text-sm"
+            spellCheck={false}
+          />
+          <StarIcon />
+        </form>
+
+        <div className="hidden items-center gap-1 sm:flex">
+          {profile.bookmarks.slice(0, 4).map((bm) => (
+            <button
+              key={bm.title}
+              type="button"
+              title={bm.title}
+              onClick={() => navigate(bm.url)}
+              className="rounded px-2 py-1 text-[11px] text-white/50 hover:bg-white/10 hover:text-white/80"
+            >
+              {bm.title}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
-        <aside className="shrink-0 border-b border-white/10 p-3 md:w-48 md:border-b-0 md:border-r">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/40">
-            Bookmarks
-          </p>
-          <nav className="flex gap-1 overflow-x-auto md:flex-col md:overflow-x-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {profile.bookmarks.map((link) => (
-              <button
-                key={link.title}
-                type="button"
-                onClick={() => setActive(link)}
-                className={`shrink-0 rounded-lg px-3 py-2 text-left text-xs transition-colors md:w-full sm:text-sm ${
-                  active.title === link.title
-                    ? "bg-[color:var(--accent)]/20 text-[color:var(--accent)]"
-                    : "text-white/70 hover:bg-white/8"
-                }`}
-              >
-                {link.title}
-              </button>
-            ))}
-          </nav>
-        </aside>
-
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="border-b border-white/10 px-4 py-4 text-center sm:py-6">
-            <p className="text-lg font-semibold text-white sm:text-xl">{active.title}</p>
-            <p className="mt-1 text-sm text-white/50">{active.desc}</p>
-            <a
-              href={active.url}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex rounded-lg bg-[color:var(--accent)] px-5 py-2 text-sm font-semibold text-[color:var(--accent-fg)] hover:opacity-90"
-            >
-              Open in new tab →
-            </a>
-          </div>
-          <div className="relative min-h-[200px] flex-1 bg-[#111]">
-            {active.url.startsWith("/") ? (
-              <iframe
-                title={active.title}
-                src={active.url}
-                className="absolute inset-0 h-full w-full border-0"
-              />
-            ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
-                <p className="text-sm text-white/50">
-                  Preview not available — external sites open in a new tab.
-                </p>
-                <a
-                  href={active.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 hover:bg-white/10"
-                >
-                  Visit {active.title}
-                </a>
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Page */}
+      <div className="relative min-h-0 flex-1 bg-[#202124]">
+        <iframe
+          key={active.url}
+          title={active.title}
+          src={active.url}
+          className="absolute inset-0 h-full w-full border-0 bg-white"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        />
       </div>
     </div>
+  );
+}
+
+function bookmarkTitle(url: string) {
+  const hit = profile.bookmarks.find((b) => b.url === url);
+  if (hit) return hit.title;
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "New Tab";
+  }
+}
+
+function ToolbarBtn({
+  label,
+  children,
+  disabled,
+  onClick,
+}: {
+  label: string;
+  children: React.ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      className="flex h-7 w-7 items-center justify-center rounded-full text-white/70 hover:bg-white/10 disabled:opacity-30 sm:h-8 sm:w-8"
+    >
+      {children}
+    </button>
+  );
+}
+
+function ChromeTabIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden className="shrink-0">
+      <circle cx="12" cy="12" r="10" fill="#4285F4" />
+      <circle cx="12" cy="12" r="4" fill="#fff" />
+    </svg>
+  );
+}
+
+function BackIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+    </svg>
+  );
+}
+
+function ForwardIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+    </svg>
+  );
+}
+
+function ReloadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-white/50" aria-hidden>
+      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z" />
+    </svg>
+  );
+}
+
+function StarIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-white/50" aria-hidden>
+      <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+      <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
   );
 }

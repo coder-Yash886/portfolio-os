@@ -5,6 +5,8 @@ import { profile } from "@/data/profile";
 
 type HistoryLine = { type: "in" | "out"; text: string };
 
+const HOST = `${profile.name.split(" ")[0].toLowerCase()}@yash-portfolio-os`;
+
 const COMMANDS: Record<string, (args: string[]) => string> = {
   help: () =>
     [
@@ -15,7 +17,7 @@ const COMMANDS: Record<string, (args: string[]) => string> = {
       "  projects   — list projects",
       "  experience — work & open source",
       "  contact    — email & socials",
-      "  resume     — open resume PDF",
+      "  resume     — resume link",
       "  clear      — clear terminal",
     ].join("\n"),
   whoami: () => `${profile.fullName} — ${profile.title}\n${profile.college} (${profile.year})`,
@@ -34,22 +36,21 @@ const COMMANDS: Record<string, (args: string[]) => string> = {
       `LinkedIn: ${profile.linkedin}`,
       `LeetCode: ${profile.leetcode}`,
     ].join("\n"),
-  resume: () => `Resume: ${profile.resumeUrl} (open in Chrome app → Resume bookmark)`,
+  resume: () => `Resume: ${profile.resumeUrl}`,
   clear: () => "",
 };
 
 export function TerminalApp() {
-  const host = profile.name.toLowerCase().replace(/\s+/g, "-");
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<HistoryLine[]>([
-    { type: "out", text: `Welcome to ${profile.name} OS Terminal. Type 'help' to begin.` },
-    { type: "out", text: "Try: whoami · projects · skills · contact" },
+    { type: "out", text: "Welcome! Type 'help' to get started." },
   ]);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [history]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [history, input]);
 
   function runCommand(cmd: string) {
     const trimmed = cmd.trim();
@@ -70,7 +71,7 @@ export function TerminalApp() {
       const out = handler(args);
       if (out) next.push({ type: "out", text: out });
     } else {
-      next.push({ type: "out", text: `command not found: ${name}. Type 'help'.` });
+      next.push({ type: "out", text: `${name}: command not found. Type 'help'.` });
     }
 
     setHistory((h) => [...h, ...next]);
@@ -78,43 +79,85 @@ export function TerminalApp() {
   }
 
   return (
-    <div className="flex h-full min-h-[200px] flex-col bg-[#0b1220] font-[family-name:var(--font-mono)] text-xs sm:text-sm">
-      <div className="flex-1 overflow-auto p-3 sm:p-4">
+    <div
+      className="flex h-full min-h-[200px] flex-col bg-[#300a24] font-[family-name:var(--font-mono)] text-[13px] leading-relaxed text-[#eeeeec] sm:text-sm"
+      onClick={() => inputRef.current?.focus()}
+    >
+      {/* Ubuntu terminal header */}
+      <div className="flex shrink-0 items-center justify-between border-b border-black/25 bg-[#2c001e] px-3 py-1.5">
+        <span className="truncate text-xs text-white/80 sm:text-sm">{HOST}</span>
+        <div className="flex shrink-0 items-center gap-2 text-white/50">
+          <button type="button" aria-label="Search" className="hover:text-white/80">
+            <SearchIcon />
+          </button>
+          <button type="button" aria-label="Menu" className="hover:text-white/80">
+            <MenuIcon />
+          </button>
+        </div>
+      </div>
+
+      {/* Terminal body */}
+      <div ref={scrollRef} className="flex-1 overflow-auto p-3 sm:p-4">
         {history.map((line, i) =>
           line.type === "in" ? (
-            <p key={i} className="whitespace-pre-wrap break-all text-[#7dd3c7]">
-              <span className="text-white/50">guest@{host}-os</span>
-              <span className="text-white/30">:</span>
-              <span className="text-[#93c5fd]">~</span>
-              <span className="text-white/50">$ </span>
-              {line.text}
-            </p>
+            <div key={i} className="whitespace-pre-wrap break-all">
+              <Prompt />
+              <span className="text-white">{line.text}</span>
+            </div>
           ) : (
-            <p key={i} className="mb-2 whitespace-pre-wrap break-all text-white/80">
+            <p key={i} className="mb-2 whitespace-pre-wrap break-all text-[#eeeeec]">
               {line.text}
             </p>
           ),
         )}
-        <div ref={bottomRef} />
+
+        <form
+          className="flex items-center whitespace-pre-wrap break-all"
+          onSubmit={(e) => {
+            e.preventDefault();
+            runCommand(input);
+          }}
+        >
+          <Prompt />
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="min-w-0 flex-1 bg-transparent text-white outline-none caret-white"
+            autoFocus
+            spellCheck={false}
+            autoComplete="off"
+            aria-label="Terminal command"
+          />
+        </form>
       </div>
-      <form
-        className="flex items-center gap-2 border-t border-white/10 px-3 py-2 sm:px-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          runCommand(input);
-        }}
-      >
-        <span className="shrink-0 text-white/50">$</span>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="min-w-0 flex-1 bg-transparent text-[#7dd3c7] outline-none placeholder:text-white/30"
-          placeholder="Type a command..."
-          autoFocus
-          spellCheck={false}
-          autoComplete="off"
-        />
-      </form>
     </div>
+  );
+}
+
+function Prompt() {
+  return (
+    <>
+      <span className="text-[#33d17a]">{HOST}</span>
+      <span className="text-white">:</span>
+      <span className="text-[#33d17a]">~</span>
+      <span className="text-white">$ </span>
+    </>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+    </svg>
   );
 }
