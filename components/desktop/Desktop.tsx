@@ -18,7 +18,7 @@ export function Desktop() {
   }, [openApp]);
 
   return (
-    <div className="desktop-root relative h-dvh w-full overflow-hidden select-none">
+    <div className="desktop-root relative h-dvh w-full max-w-[100dvw] overflow-hidden select-none">
       <LiveWallpaper />
       <div className="desktop-vignette absolute inset-0" aria-hidden />
       <div className="desktop-grain absolute inset-0 opacity-[0.28]" aria-hidden />

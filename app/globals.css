@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm cinematic — matched to live wallpaper (#4b3b34 dominant) */
   --background: #0c0a08;
   --foreground: #f2ebe3;
   --accent: #d4a574;
@@ -17,6 +16,9 @@
   --window-title: rgba(10, 8, 6, 0.88);
   --window-fg: #ece4d8;
   --border-subtle: rgba(212, 165, 116, 0.12);
+  /* Spider-Man sits upper-right in the portrait wallpaper */
+  --wallpaper-focus-x: 72%;
+  --wallpaper-focus-y: 28%;
 }
 
 @theme inline {
@@ -43,10 +45,53 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
+.wallpaper-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  width: 100dvw;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #0c0a08;
+}
+
+.wallpaper-poster,
+.wallpaper-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--wallpaper-focus-x) var(--wallpaper-focus-y);
+}
+
+.wallpaper-poster {
+  z-index: 1;
+}
+
+.wallpaper-video {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.wallpaper-video--ready {
+  opacity: 1;
+}
+
+/* Portrait phones: wallpaper is native vertical — center on character */
+@media (orientation: portrait) {
+  .wallpaper-poster,
+  .wallpaper-video {
+    object-position: 68% 32%;
+  }
+}
+
 .desktop-vignette {
   background:
-    radial-gradient(ellipse 100% 90% at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.5) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 14%, transparent 82%, rgba(0, 0, 0, 0.45) 100%);
+    radial-gradient(ellipse 90% 80% at 58% 38%, transparent 45%, rgba(0, 0, 0, 0.35) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 12%, transparent 88%, rgba(0, 0, 0, 0.35) 100%);
   pointer-events: none;
 }
 

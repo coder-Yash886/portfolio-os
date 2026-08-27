@@ -6,5 +6,8 @@ export const wallpaper = {
   poster: "/wallpaper/poster.jpg",
   /** Pin dominant tone — used for theme tokens */
   dominantColor: "#4b3b34",
+  /** Focal point — keeps Spider-Man face/body in frame when cover fills screen */
+  focusX: "72%",
+  focusY: "28%",
   source: "https://pin.it/1TwQLwq6G",
 } as const;

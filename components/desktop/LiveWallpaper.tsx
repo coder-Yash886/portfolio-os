@@ -1,25 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Hls from "hls.js";
 import { wallpaper } from "@/lib/wallpaper";
 
 export function LiveWallpaper() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [usePosterOnly, setUsePosterOnly] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (motionQuery.matches) {
-      setUsePosterOnly(true);
-      return;
-    }
+    if (motionQuery.matches) return;
 
     const video = videoRef.current;
     if (!video) return;
 
+    let hls: Hls | null = null;
+
+    const markReady = () => setReady(true);
+
     const tryPlay = () => {
-      video.play().catch(() => setUsePosterOnly(true));
+      markReady();
+      video.play().catch(() => markReady());
     };
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -29,46 +31,37 @@ export function LiveWallpaper() {
     }
 
     if (Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: true,
-        maxBufferLength: 30,
-      });
+      hls = new Hls({ enableWorker: true, maxBufferLength: 30 });
       hls.loadSource(wallpaper.hlsUrl);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, tryPlay);
       hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          setUsePosterOnly(true);
-          hls.destroy();
-        }
+        if (data.fatal) markReady();
       });
-      return () => hls.destroy();
+      return () => hls?.destroy();
     }
 
-    setUsePosterOnly(true);
+    markReady();
   }, []);
 
-  if (usePosterOnly) {
-    return (
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${wallpaper.poster})` }}
-        aria-hidden
-      />
-    );
-  }
+  const stageStyle: CSSProperties = {
+    "--wallpaper-focus-x": wallpaper.focusX,
+    "--wallpaper-focus-y": wallpaper.focusY,
+  } as CSSProperties;
 
   return (
-    <video
-      ref={videoRef}
-      className="absolute inset-0 h-full w-full object-cover scale-[1.02]"
-      poster={wallpaper.poster}
-      muted
-      loop
-      playsInline
-      autoPlay
-      preload="auto"
-      aria-hidden
-    />
+    <div className="wallpaper-stage absolute inset-0" style={stageStyle} aria-hidden>
+      <img src={wallpaper.poster} alt="" className="wallpaper-poster" />
+      <video
+        ref={videoRef}
+        className={`wallpaper-video ${ready ? "wallpaper-video--ready" : ""}`}
+        poster={wallpaper.poster}
+        muted
+        loop
+        playsInline
+        autoPlay
+        preload="auto"
+      />
+    </div>
   );
 }
