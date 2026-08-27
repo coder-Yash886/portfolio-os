@@ -70,8 +70,8 @@ export function WindowFrame({ window: win, children }: Props) {
       onMouseDown={() => focusWindow(win.id)}
       className={`pointer-events-auto absolute flex flex-col overflow-hidden rounded-xl border shadow-2xl transition-[box-shadow] ${
         isFocused
-          ? "border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
-          : "border-white/10 opacity-95"
+          ? "border-[color:var(--accent)]/25 shadow-[0_24px_80px_rgba(0,0,0,0.65)]"
+          : "border-[color:var(--border-subtle)] opacity-[0.97]"
       } bg-[color:var(--window)]`}
       style={style}
     >
@@ -79,7 +79,7 @@ export function WindowFrame({ window: win, children }: Props) {
         onPointerDown={onPointerDownTitle}
         onPointerMove={onPointerMoveTitle}
         onPointerUp={onPointerUpTitle}
-        className="flex h-10 shrink-0 cursor-grab items-center justify-between border-b border-white/8 bg-[color:var(--window-title)] px-3 active:cursor-grabbing"
+        className="flex h-10 shrink-0 cursor-grab items-center justify-between border-b border-[color:var(--border-subtle)] bg-[color:var(--window-title)] px-3 active:cursor-grabbing"
       >
         <div className="flex items-center gap-2 text-sm font-medium text-white/90">
           <span className="h-2 w-2 rounded-full bg-[color:var(--accent)]" />

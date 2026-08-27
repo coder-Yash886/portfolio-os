@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* Portfolio OS — teal accent (not Ubuntu orange/green) */
-  --background: #071018;
-  --foreground: #e8eef5;
-  --accent: #2dd4bf;
-  --accent-fg: #042f2e;
-  --topbar: rgba(8, 16, 28, 0.78);
-  --topbar-fg: #f1f5f9;
-  --topbar-muted: #94a3b8;
-  --dock: rgba(10, 18, 32, 0.72);
-  --dock-icon: #e2e8f0;
-  --window: #121a28;
-  --window-title: #0c1320;
-  --window-fg: #e8eef5;
+  /* Warm cinematic — matched to live wallpaper (#4b3b34 dominant) */
+  --background: #0c0a08;
+  --foreground: #f2ebe3;
+  --accent: #d4a574;
+  --accent-fg: #1a1208;
+  --accent-glow: rgba(212, 165, 116, 0.45);
+  --highlight: #e8c49a;
+  --topbar: rgba(12, 9, 7, 0.72);
+  --topbar-fg: #f5efe6;
+  --topbar-muted: #a89888;
+  --dock: rgba(14, 10, 8, 0.68);
+  --dock-icon: #ece4d8;
+  --window: rgba(18, 14, 11, 0.92);
+  --window-title: rgba(10, 8, 6, 0.88);
+  --window-fg: #ece4d8;
+  --border-subtle: rgba(212, 165, 116, 0.12);
 }
 
 @theme inline {
@@ -40,12 +43,11 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
-.desktop-wallpaper {
+.desktop-vignette {
   background:
-    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(45, 212, 191, 0.18), transparent 55%),
-    radial-gradient(ellipse 60% 50% at 15% 80%, rgba(56, 189, 248, 0.14), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(99, 102, 241, 0.12), transparent 45%),
-    linear-gradient(160deg, #050b14 0%, #0a1628 45%, #071018 100%);
+    radial-gradient(ellipse 100% 90% at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.5) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 14%, transparent 82%, rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
 }
 
 .desktop-grain {

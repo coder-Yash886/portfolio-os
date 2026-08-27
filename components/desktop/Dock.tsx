@@ -24,7 +24,7 @@ export function Dock() {
   return (
     <nav
       aria-label="Application dock"
-      className="pointer-events-auto absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-end gap-1.5 rounded-2xl border border-white/10 bg-[color:var(--dock)] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+      className="pointer-events-auto absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-end gap-1.5 rounded-2xl border border-[color:var(--border-subtle)] bg-[color:var(--dock)] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl"
     >
       {DOCK_ORDER.map((appId) => {
         const app = APPS[appId];

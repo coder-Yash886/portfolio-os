@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Dock } from "@/components/desktop/Dock";
+import { LiveWallpaper } from "@/components/desktop/LiveWallpaper";
 import { TopBar } from "@/components/desktop/TopBar";
 import { WindowFrame } from "@/components/desktop/WindowFrame";
 import { AppContent } from "@/components/apps/AppContent";
@@ -18,8 +19,9 @@ export function Desktop() {
 
   return (
     <div className="desktop-root relative h-dvh w-full overflow-hidden select-none">
-      <div className="desktop-wallpaper absolute inset-0" aria-hidden />
-      <div className="desktop-grain absolute inset-0 opacity-[0.35]" aria-hidden />
+      <LiveWallpaper />
+      <div className="desktop-vignette absolute inset-0" aria-hidden />
+      <div className="desktop-grain absolute inset-0 opacity-[0.28]" aria-hidden />
 
       <TopBar />
 
