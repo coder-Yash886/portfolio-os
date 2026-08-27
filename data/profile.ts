@@ -135,24 +135,45 @@ export const profile = {
   experience: [
     {
       role: "Backend Developer",
-      org: "Open Source Society (College Technical Society)",
-      period: "Jan 2025 – Present",
+      org: "Open Source Society",
+      orgUrl: "",
+      period: "Jan 2025 — Present",
       location: "Ghaziabad, U.P.",
       points: [
         "Developed backend APIs using Node.js, Express.js, and MongoDB for event registration systems.",
         "Implemented JWT authentication, CRUD operations, and REST APIs for secure user management.",
         "Collaborated with team using Git, GitHub, and Postman for development and API testing.",
+        "Built scalable APIs supporting 200+ concurrent participants for college technical events.",
       ],
     },
     {
       role: "Open Source Contributor",
-      org: "OWASP – cve-lite-cli",
-      period: "May 2025 – Present",
+      org: "OWASP",
+      orgUrl: "https://github.com/OWASP",
+      period: "May 2025 — Present",
       location: "Remote",
       points: [
-        "Contributed to OWASP cve-lite-cli for searching CVEs.",
+        "Contributed to OWASP cve-lite-cli for searching CVEs through the command line.",
         "Submitted and merged multiple pull requests through GitHub code reviews.",
+        "Fixed bugs and implemented feature improvements in the open-source security tooling.",
       ],
+    },
+  ],
+  contributions: [
+    {
+      repo: "OWASP/cve-lite-cli",
+      url: "https://github.com/OWASP/cve-lite-cli",
+      prUrl:
+        "https://github.com/OWASP/cve-lite-cli/pulls?q=is%3Apr+author%3ACoder-Yash886+is%3Aclosed",
+      description:
+        "14 merged PRs — bug fixes, lockfile fixtures, --fix/--debug flags, CVE report improvements, and dependency path reconstruction.",
+    },
+    {
+      repo: "kubearmor/KubeArmor",
+      url: "https://github.com/kubearmor/KubeArmor",
+      prUrl: "https://github.com/kubearmor/KubeArmor/pull/2805",
+      description:
+        "Security fix PR: bump google.golang.org/grpc to v1.82.1 (GHSA-hrxh-6v49-42gf) across all KubeArmor modules.",
     },
   ],
 } as const;

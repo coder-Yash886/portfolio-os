@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { AppId } from "@/lib/apps";
 import { BrowserApp } from "@/components/apps/BrowserApp";
 import { EditorApp } from "@/components/apps/EditorApp";
@@ -8,7 +8,13 @@ import { StoreApp } from "@/components/apps/StoreApp";
 import { TerminalApp } from "@/components/apps/TerminalApp";
 import { profile } from "@/data/profile";
 
-const FILE_SECTIONS = ["About Me", "Projects", "Experience", "Contact"] as const;
+const FILE_SECTIONS = [
+  "About Me",
+  "Projects",
+  "Experience",
+  "Contributions",
+  "Contact",
+] as const;
 
 type Props = {
   appId: AppId;
@@ -35,15 +41,42 @@ export function AppContent({ appId }: Props) {
 
 function FilesApp() {
   const [active, setActive] = useState(0);
+  const [sidebarWidth, setSidebarWidth] = useState(208);
+  const sidebarDrag = useRef<{ startX: number; startW: number } | null>(null);
+
+  function onSidebarResizeStart(e: React.PointerEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    sidebarDrag.current = { startX: e.clientX, startW: sidebarWidth };
+
+    function onMove(ev: PointerEvent) {
+      if (!sidebarDrag.current) return;
+      const dx = ev.clientX - sidebarDrag.current.startX;
+      const next = Math.min(320, Math.max(120, sidebarDrag.current.startW + dx));
+      setSidebarWidth(next);
+    }
+
+    function onUp() {
+      sidebarDrag.current = null;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    }
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col md:flex-row">
-      <aside className="shrink-0 border-b border-[color:var(--border-subtle)] bg-black/25 md:w-52 md:border-b-0 md:border-r">
-        <p className="hidden px-3 pt-3 text-[11px] font-semibold uppercase tracking-wider text-white/45 md:block">
+      <aside
+        className="relative hidden shrink-0 flex-col border-b border-[color:var(--border-subtle)] bg-black/25 md:flex md:border-b-0 md:border-r"
+        style={{ width: sidebarWidth }}
+      >
+        <p className="px-3 pt-3 text-[11px] font-semibold uppercase tracking-wider text-white/45">
           Sections
         </p>
         <nav
-          className="flex gap-1 overflow-x-auto p-2 md:mt-2 md:flex-col md:overflow-x-visible md:p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="mt-2 flex flex-1 flex-col gap-1 overflow-y-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           aria-label="Portfolio sections"
         >
           {FILE_SECTIONS.map((label, i) => (
@@ -51,7 +84,7 @@ function FilesApp() {
               key={label}
               type="button"
               onClick={() => setActive(i)}
-              className={`shrink-0 rounded-lg px-3 py-2 text-left text-xs transition-colors sm:text-sm md:w-full ${
+              className={`w-full rounded-lg px-3 py-2 text-left text-xs transition-colors sm:text-sm ${
                 i === active
                   ? "bg-[color:var(--accent)] font-medium text-[color:var(--accent-fg)]"
                   : "text-white/75 hover:bg-white/8"
@@ -63,18 +96,58 @@ function FilesApp() {
         </nav>
         <a
           href={profile.resumeUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mx-2 mb-2 flex items-center justify-center gap-2 rounded-lg bg-[color:var(--accent)] px-3 py-2 text-xs font-semibold text-[color:var(--accent-fg)] transition-opacity hover:opacity-90 sm:text-sm md:mx-3 md:mb-3 md:py-2.5"
+          download="Yash_Kumar_Resume.pdf"
+          className="mx-3 mb-3 flex items-center justify-center gap-2 rounded-lg bg-[color:var(--accent)] px-3 py-2.5 text-xs font-semibold text-[color:var(--accent-fg)] transition-opacity hover:opacity-90 sm:text-sm"
         >
+          <DownloadIcon />
           Download Resume
         </a>
+        <div
+          role="separator"
+          aria-label="Resize sidebar"
+          onPointerDown={onSidebarResizeStart}
+          className="absolute top-0 -right-1 z-10 hidden h-full w-3 cursor-col-resize touch-none md:block"
+        >
+          <div className="absolute inset-y-0 right-1 w-0.5 bg-transparent transition-colors hover:bg-[color:var(--accent)]/50" />
+        </div>
       </aside>
+
+      {/* Mobile section tabs */}
+      <nav
+        className="flex gap-1 overflow-x-auto border-b border-[color:var(--border-subtle)] bg-black/25 p-2 md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        aria-label="Portfolio sections"
+      >
+        {FILE_SECTIONS.map((label, i) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() => setActive(i)}
+            className={`shrink-0 rounded-lg px-3 py-2 text-left text-xs transition-colors ${
+              i === active
+                ? "bg-[color:var(--accent)] font-medium text-[color:var(--accent-fg)]"
+                : "text-white/75 hover:bg-white/8"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <a
+        href={profile.resumeUrl}
+        download="Yash_Kumar_Resume.pdf"
+        className="mx-2 mb-2 flex items-center justify-center gap-2 rounded-lg bg-[color:var(--accent)] px-3 py-2 text-xs font-semibold text-[color:var(--accent-fg)] md:hidden"
+      >
+        <DownloadIcon />
+        Download Resume
+      </a>
+
       <div className="min-h-0 flex-1 overflow-auto p-4 sm:p-6 md:p-8">
         {active === 0 && <AboutSection />}
         {active === 1 && <ProjectsSection />}
         {active === 2 && <ExperienceSection />}
-        {active === 3 && <ContactSection />}
+        {active === 3 && <ContributionsSection />}
+        {active === 4 && <ContactSection />}
       </div>
     </div>
   );
@@ -244,41 +317,132 @@ function ExternalIcon() {
 
 function ExperienceSection() {
   return (
-    <div>
-      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+    <div className="space-y-8">
+      <h1 className="flex items-center gap-2 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        <BriefcaseIcon />
         Experience
       </h1>
-      <div className="mt-5 space-y-4 sm:mt-6">
-        {profile.experience.map((job) => (
+
+      {profile.experience.map((job) => (
+        <article key={`${job.org}-${job.role}`}>
+          <h2 className="text-lg font-semibold text-white sm:text-xl">{job.role}</h2>
+          <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-white/55">
+            {job.orgUrl ? (
+              <a
+                href={job.orgUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-white/70 hover:text-[color:var(--highlight)] hover:underline"
+              >
+                {job.org}
+              </a>
+            ) : (
+              <span>{job.org}</span>
+            )}
+            <span>·</span>
+            <span>{job.location}</span>
+            {job.orgUrl ? <LinkIcon /> : null}
+          </p>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-white/55">
+            <CalendarIcon />
+            {job.period}
+          </p>
+          <h3 className="mt-4 text-sm font-semibold text-white sm:text-base">Summary</h3>
+          <ul className="mt-2 space-y-2 text-sm leading-relaxed text-white/70 sm:text-[15px]">
+            {job.points.map((point) => (
+              <li key={point} className="flex gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-white/40" />
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+
+      <article className="border-t border-[color:var(--border-subtle)] pt-6">
+        <h2 className="text-lg font-semibold text-white sm:text-xl">Education</h2>
+        <p className="mt-1 text-sm text-white/70">{profile.college}</p>
+        <p className="text-sm text-white/55">
+          {profile.education} · CGPA {profile.cgpa}
+        </p>
+        <p className="mt-1 flex items-center gap-1.5 text-sm text-white/55">
+          <CalendarIcon />
+          {profile.educationYears}
+        </p>
+      </article>
+    </div>
+  );
+}
+
+function ContributionsSection() {
+  return (
+    <div>
+      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        Open Source Contributions
+      </h1>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        {profile.contributions.map((item) => (
           <article
-            key={`${job.org}-${job.role}`}
+            key={item.repo}
             className="rounded-xl border border-[color:var(--border-subtle)] bg-white/5 p-4"
           >
-            <h2 className="text-base font-semibold text-white">{job.role}</h2>
-            <p className="mt-1 text-sm text-[color:var(--accent)]">{job.org}</p>
-            <p className="text-xs text-white/50">
-              {job.period} · {job.location}
-            </p>
-            <ul className="mt-3 space-y-1.5 text-sm text-white/70">
-              {job.points.map((point) => (
-                <li key={point} className="flex gap-2">
-                  <span className="text-[color:var(--accent)]">•</span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="flex items-center gap-2">
+              <GitHubIcon />
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-white hover:text-[color:var(--highlight)] hover:underline"
+              >
+                {item.repo}
+              </a>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/60">{item.description}</p>
+            <a
+              href={item.prUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--highlight)] hover:underline"
+            >
+              <LinkIcon />
+              View PR{item.repo.includes("cve-lite") ? "s" : ""}
+            </a>
           </article>
         ))}
-        <article className="rounded-xl border border-[color:var(--border-subtle)] bg-white/5 p-4">
-          <h2 className="text-base font-semibold text-white">Education</h2>
-          <p className="mt-1 text-sm text-white/80">{profile.college}</p>
-          <p className="text-sm text-white/60">
-            {profile.education} · CGPA {profile.cgpa}
-          </p>
-          <p className="text-xs text-white/50">{profile.educationYears}</p>
-        </article>
       </div>
     </div>
+  );
+}
+
+function BriefcaseIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="text-[color:var(--accent)]" aria-hidden>
+      <path d="M10 2h4a2 2 0 0 1 2 2v2h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4V4a2 2 0 0 1 2-2Zm4 4V4h-4v2h4ZM6 10v2h12v-2H6Z" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-white/45" aria-hidden>
+      <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a1 1 0 0 1 1-1Zm12 8H5v10h14V10Z" />
+    </svg>
+  );
+}
+
+function LinkIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-white/40" aria-hidden>
+      <path d="M3.9 12a5 5 0 0 1 1.46-3.54l2.83-2.83a5 5 0 0 1 7.07 7.07l-.88.88-1.41-1.41.88-.88a3 3 0 0 0-4.24-4.24l-2.83 2.83a3 3 0 0 0 0 4.24 1.41 1.41 0 0 1-1.42 2.12ZM20.1 12a5 5 0 0 1-1.46 3.54l-2.83 2.83a5 5 0 0 1-7.07-7.07l.88-.88 1.41 1.41-.88.88a3 3 0 0 0 4.24 4.24l2.83-2.83a3 3 0 0 0 0-4.24 1.41-1.41 1.42-2.12Z" />
+    </svg>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 0 1 1 1v2h12v-2a1 1 0 1 1 2 0v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" />
+    </svg>
   );
 }
 
@@ -354,8 +518,7 @@ function ContactSection() {
         </p>
         <a
           href={profile.resumeUrl}
-          target="_blank"
-          rel="noreferrer"
+          download="Yash_Kumar_Resume.pdf"
           className="mt-4 inline-flex items-center rounded-lg bg-[color:var(--accent)] px-4 py-2 text-sm font-semibold text-[color:var(--accent-fg)] hover:opacity-90"
         >
           View Resume (PDF)

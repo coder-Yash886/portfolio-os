@@ -17,7 +17,7 @@ export type AppDefinition = {
 export const APPS: Record<AppId, AppDefinition> = {
   files: {
     id: "files",
-    title: "Files",
+    title: "File Explorer",
     dockLabel: "Files",
     defaultSize: { width: 920, height: 580 },
     minSize: { width: 640, height: 420 },

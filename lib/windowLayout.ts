@@ -74,3 +74,24 @@ export function clampWindowPosition(
     y: Math.min(Math.max(TOP_BAR, y), Math.max(TOP_BAR, maxY)),
   };
 }
+
+export function clampWindowSize(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  minWidth: number,
+  minHeight: number,
+) {
+  const { width: vw, height: vh, isMobile } = getViewport();
+  const pad = isMobile ? 6 : 12;
+  const dock = isMobile ? DOCK_MOBILE : DOCK_DESKTOP;
+  const maxW = vw - x - pad;
+  const maxH = vh - y - dock;
+
+  const w = Math.min(Math.max(width, minWidth), Math.max(minWidth, maxW));
+  const h = Math.min(Math.max(height, minHeight), Math.max(minHeight, maxH));
+  const pos = clampWindowPosition(w, h, x, y);
+
+  return { x: pos.x, y: pos.y, width: w, height: h };
+}

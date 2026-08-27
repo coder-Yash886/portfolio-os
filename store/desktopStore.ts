@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { APPS, type AppId } from "@/lib/apps";
 import {
   clampWindowPosition,
+  clampWindowSize,
   getWindowLayout,
 } from "@/lib/windowLayout";
 
@@ -172,9 +173,30 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
     }),
 
   resizeWindow: (id, width, height) =>
-    set((state) => ({
-      windows: state.windows.map((w) =>
-        w.id === id ? { ...w, width, height } : w,
-      ),
-    })),
+    set((state) => {
+      const win = state.windows.find((w) => w.id === id);
+      if (!win || win.maximized) return state;
+      const app = APPS[win.appId];
+      const bounds = clampWindowSize(
+        win.x,
+        win.y,
+        width,
+        height,
+        app.minSize.width,
+        app.minSize.height,
+      );
+      return {
+        windows: state.windows.map((w) =>
+          w.id === id
+            ? {
+                ...w,
+                x: bounds.x,
+                y: bounds.y,
+                width: bounds.width,
+                height: bounds.height,
+              }
+            : w,
+        ),
+      };
+    }),
 }));

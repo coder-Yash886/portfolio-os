@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useIsMobile } from "@/hooks/useMedia";
+import { APPS } from "@/lib/apps";
 import type { WindowState } from "@/store/desktopStore";
 import { useDesktopStore } from "@/store/desktopStore";
 
@@ -17,6 +18,7 @@ export function WindowFrame({ window: win, children }: Props) {
   const minimizeWindow = useDesktopStore((s) => s.minimizeWindow);
   const toggleMaximize = useDesktopStore((s) => s.toggleMaximize);
   const moveWindow = useDesktopStore((s) => s.moveWindow);
+  const resizeWindow = useDesktopStore((s) => s.resizeWindow);
   const focusedId = useDesktopStore((s) => s.focusedId);
 
   const dragRef = useRef<{ ox: number; oy: number; sx: number; sy: number } | null>(
@@ -67,6 +69,30 @@ export function WindowFrame({ window: win, children }: Props) {
   function onPointerUpTitle() {
     dragRef.current = null;
   }
+
+  function onResizePointerDown(e: React.PointerEvent) {
+    if (isMaximized || isMobile) return;
+    e.preventDefault();
+    e.stopPropagation();
+    focusWindow(win.id);
+    const start = { ox: e.clientX, oy: e.clientY, sw: win.width, sh: win.height };
+
+    function onMove(ev: PointerEvent) {
+      const dx = ev.clientX - start.ox;
+      const dy = ev.clientY - start.oy;
+      resizeWindow(win.id, start.sw + dx, start.sh + dy);
+    }
+
+    function onUp() {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    }
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  }
+
+  const minSize = APPS[win.appId].minSize;
 
   return (
     <section
@@ -136,9 +162,31 @@ export function WindowFrame({ window: win, children }: Props) {
           </button>
         </div>
       </header>
-      <div className="min-h-0 flex-1 overflow-auto text-[color:var(--window-fg)]">
+      <div className="relative min-h-0 flex-1 overflow-auto text-[color:var(--window-fg)]">
         {children}
       </div>
+      {!isMaximized && !isMobile && (
+        <div
+          role="separator"
+          aria-label="Resize window"
+          onPointerDown={onResizePointerDown}
+          className="absolute right-0 bottom-0 z-20 h-5 w-5 cursor-se-resize touch-none"
+          title={`Drag to resize (min ${minSize.width}×${minSize.height})`}
+        >
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            className="absolute right-1 bottom-1 text-white/35"
+            aria-hidden
+          >
+            <path
+              d="M12 12H8V10H10V8H12V12ZM12 8H10V6H8V4H10V6H12V8ZM8 8H6V6H8V8Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+      )}
     </section>
   );
 }
