@@ -18,6 +18,12 @@ export type WindowState = {
   minimized: boolean;
   maximized: boolean;
   zIndex: number;
+  restoreBounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
 };
 
 type DesktopStore = {
@@ -43,7 +49,11 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
       (w) => w.appId === appId && !w.minimized,
     );
     if (existing) {
-      get().focusWindow(existing.id);
+      if (get().focusedId === existing.id) {
+        get().closeWindow(existing.id);
+      } else {
+        get().focusWindow(existing.id);
+      }
       return;
     }
 
@@ -82,6 +92,7 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
           minimized: false,
           maximized: layout.maximized,
           zIndex,
+          restoreBounds: null,
         },
       ],
       focusedId: id,
@@ -116,9 +127,35 @@ export const useDesktopStore = create<DesktopStore>((set, get) => ({
 
   toggleMaximize: (id) =>
     set((state) => ({
-      windows: state.windows.map((w) =>
-        w.id === id ? { ...w, maximized: !w.maximized, minimized: false } : w,
-      ),
+      windows: state.windows.map((w) => {
+        if (w.id !== id) return w;
+
+        if (!w.maximized) {
+          return {
+            ...w,
+            maximized: true,
+            minimized: false,
+            restoreBounds: {
+              x: w.x,
+              y: w.y,
+              width: w.width,
+              height: w.height,
+            },
+          };
+        }
+
+        const restore = w.restoreBounds;
+        return {
+          ...w,
+          maximized: false,
+          minimized: false,
+          x: restore?.x ?? w.x,
+          y: restore?.y ?? w.y,
+          width: restore?.width ?? w.width,
+          height: restore?.height ?? w.height,
+          restoreBounds: null,
+        };
+      }),
       focusedId: id,
     })),
 

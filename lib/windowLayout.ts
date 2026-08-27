@@ -1,8 +1,8 @@
 import type { AppDefinition } from "@/lib/apps";
 
 const TOP_BAR = 32;
-const DOCK_MOBILE = 88;
-const DOCK_DESKTOP = 96;
+const DOCK_MOBILE = 130;
+const DOCK_DESKTOP = 110;
 
 export type ViewportInfo = {
   width: number;

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Dock } from "@/components/desktop/Dock";
 import { LiveWallpaper } from "@/components/desktop/LiveWallpaper";
 import { TopBar } from "@/components/desktop/TopBar";
+import { WindowTabs } from "@/components/desktop/WindowTabs";
 import { WindowFrame } from "@/components/desktop/WindowFrame";
 import { AppContent } from "@/components/apps/AppContent";
 import { useDesktopStore } from "@/store/desktopStore";
@@ -44,6 +45,7 @@ export function Desktop() {
         )}
       </main>
 
+      <WindowTabs />
       <Dock />
     </div>
   );
