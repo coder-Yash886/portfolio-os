@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0c0a08;
-  --foreground: #f2ebe3;
-  --accent: #d4a574;
-  --accent-fg: #1a1208;
-  --accent-glow: rgba(212, 165, 116, 0.45);
-  --highlight: #e8c49a;
-  --topbar: rgba(12, 9, 7, 0.72);
-  --topbar-fg: #f5efe6;
-  --topbar-muted: #a89888;
-  --dock: rgba(14, 10, 8, 0.68);
-  --dock-icon: #ece4d8;
-  --window: rgba(18, 14, 11, 0.92);
-  --window-title: rgba(10, 8, 6, 0.88);
-  --window-fg: #ece4d8;
-  --border-subtle: rgba(212, 165, 116, 0.12);
+  --background: #0a0e14;
+  --foreground: #eef2f8;
+  --accent: #3584e4;
+  --accent-fg: #ffffff;
+  --accent-glow: rgba(53, 132, 228, 0.45);
+  --highlight: #62a0ea;
+  --topbar: rgba(10, 14, 22, 0.78);
+  --topbar-fg: #eef2f8;
+  --topbar-muted: #8b9cb5;
+  --dock: rgba(12, 16, 26, 0.72);
+  --dock-icon: #e8edf5;
+  --window: rgba(14, 18, 28, 0.94);
+  --window-title: rgba(8, 12, 20, 0.92);
+  --window-fg: #e8edf5;
+  --border-subtle: rgba(98, 160, 234, 0.18);
   /* Spider-Man sits upper-right in the portrait wallpaper */
   --wallpaper-focus-x: 72%;
   --wallpaper-focus-y: 28%;
@@ -53,7 +53,7 @@ body {
   height: 100%;
   height: 100dvh;
   overflow: hidden;
-  background: #0c0a08;
+  background: #0a0e14;
 }
 
 .wallpaper-poster,

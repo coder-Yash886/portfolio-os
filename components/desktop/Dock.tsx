@@ -43,7 +43,7 @@ export function Dock() {
             </span>
             <span
               className={`mt-0.5 h-1 w-1 rounded-full transition-opacity ${
-                isRunning ? "bg-[#62a0ea] opacity-100" : "opacity-0"
+                isRunning ? "bg-[color:var(--accent)] opacity-100" : "opacity-0"
               }`}
             />
             <span className="pointer-events-none absolute -top-8 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-black/80 px-2 py-0.5 text-[11px] text-white group-hover:block">
