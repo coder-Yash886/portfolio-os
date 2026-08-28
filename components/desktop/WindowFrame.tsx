@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useIsMobile } from "@/hooks/useMedia";
 import { APPS } from "@/lib/apps";
+import { getMaximizedInsets } from "@/lib/windowLayout";
 import type { WindowState } from "@/store/desktopStore";
 import { useDesktopStore } from "@/store/desktopStore";
 
@@ -28,12 +29,14 @@ export function WindowFrame({ window: win, children }: Props) {
   const isFocused = focusedId === win.id;
   const isMaximized = win.maximized && !isMobile;
 
+  const maximizedInsets = isMaximized ? getMaximizedInsets() : null;
+
   const style: React.CSSProperties = isMaximized
     ? {
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0,
+        left: maximizedInsets!.left,
+        top: maximizedInsets!.top,
+        right: maximizedInsets!.right,
+        bottom: maximizedInsets!.bottom,
         width: "auto",
         height: "auto",
         zIndex: win.zIndex,
@@ -162,7 +165,7 @@ export function WindowFrame({ window: win, children }: Props) {
           </button>
         </div>
       </header>
-      <div className="relative min-h-0 flex-1 overflow-auto text-[color:var(--window-fg)]">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden text-[color:var(--window-fg)]">
         {children}
       </div>
       {!isMaximized && !isMobile && (

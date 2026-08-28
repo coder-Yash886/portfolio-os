@@ -1,8 +1,18 @@
 import type { AppDefinition } from "@/lib/apps";
 
-const TOP_BAR = 32;
-const DOCK_MOBILE = 130;
-const DOCK_DESKTOP = 110;
+export const TOP_BAR = 32;
+export const DOCK_MOBILE = 130;
+export const DOCK_DESKTOP = 110;
+
+export function getMaximizedInsets() {
+  const { isMobile } = getViewport();
+  return {
+    top: TOP_BAR,
+    left: 0,
+    right: 0,
+    bottom: isMobile ? DOCK_MOBILE : DOCK_DESKTOP,
+  };
+}
 
 export type ViewportInfo = {
   width: number;
