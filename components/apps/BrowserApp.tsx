@@ -9,10 +9,20 @@ type Tab = {
   url: string;
 };
 
-const HOME_URL = "https://www.google.com/webhp?igu=1";
+const START_URL = "portfolio://newtab";
 
-function newTab(url = HOME_URL, title = "New Tab"): Tab {
+function newTab(url = START_URL, title = "New Tab"): Tab {
   return { id: `tab-${Date.now()}-${Math.random()}`, title, url };
+}
+
+function canEmbedInFrame(url: string) {
+  if (url === START_URL || url.startsWith("/")) return false;
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return host === "google.com";
+  } catch {
+    return false;
+  }
 }
 
 export function BrowserApp() {
@@ -21,7 +31,7 @@ export function BrowserApp() {
     return [first];
   });
   const [activeId, setActiveId] = useState(() => tabs[0]?.id ?? "");
-  const [address, setAddress] = useState(HOME_URL);
+  const [address, setAddress] = useState("");
 
   const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
 
@@ -29,22 +39,20 @@ export function BrowserApp() {
     (raw: string) => {
       let url = raw.trim();
       if (!url) return;
-      if (!/^https?:\/\//i.test(url) && !url.startsWith("/")) {
+
+      if (url === "new tab" || url === START_URL) {
+        url = START_URL;
+      } else if (!/^https?:\/\//i.test(url) && !url.startsWith("/")) {
         url = `https://${url}`;
       }
 
+      const title =
+        url === START_URL ? "New Tab" : bookmarkTitle(url);
+
       setTabs((prev) =>
-        prev.map((t) =>
-          t.id === activeId
-            ? {
-                ...t,
-                url,
-                title: url.includes("google.com") ? "New Tab" : bookmarkTitle(url),
-              }
-            : t,
-        ),
+        prev.map((t) => (t.id === activeId ? { ...t, url, title } : t)),
       );
-      setAddress(url);
+      setAddress(url === START_URL ? "" : url);
     },
     [activeId],
   );
@@ -53,7 +61,7 @@ export function BrowserApp() {
     const tab = newTab();
     setTabs((prev) => [...prev, tab]);
     setActiveId(tab.id);
-    setAddress(tab.url);
+    setAddress("");
   }
 
   function closeTab(id: string, e: React.MouseEvent) {
@@ -65,13 +73,17 @@ export function BrowserApp() {
     if (id === activeId) {
       const fallback = next[Math.max(0, idx - 1)];
       setActiveId(fallback.id);
-      setAddress(fallback.url);
+      setAddress(fallback.url === START_URL ? "" : fallback.url);
     }
   }
 
   function selectTab(tab: Tab) {
     setActiveId(tab.id);
-    setAddress(tab.url);
+    setAddress(tab.url === START_URL ? "" : tab.url);
+  }
+
+  function openExternal(url: string) {
+    window.open(url, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -101,7 +113,7 @@ export function BrowserApp() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") closeTab(tab.id, e as unknown as React.MouseEvent);
                   }}
-                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full opacity-0 hover:bg-white/15 group-hover:opacity-100"
+                  className="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full opacity-0 hover:bg-white/15 group-hover:opacity-100"
                   aria-label="Close tab"
                 >
                   <CloseIcon />
@@ -114,7 +126,7 @@ export function BrowserApp() {
           type="button"
           onClick={addTab}
           aria-label="New tab"
-          className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/60 hover:bg-white/10"
+          className="mb-1 flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-white/60 hover:bg-white/10"
         >
           <PlusIcon />
         </button>
@@ -129,7 +141,10 @@ export function BrowserApp() {
           <ToolbarBtn label="Forward" disabled>
             <ForwardIcon />
           </ToolbarBtn>
-          <ToolbarBtn label="Reload" onClick={() => navigate(active.url)}>
+          <ToolbarBtn
+            label="Reload"
+            onClick={() => navigate(active.url === START_URL ? START_URL : active.url)}
+          >
             <ReloadIcon />
           </ToolbarBtn>
         </div>
@@ -138,14 +153,15 @@ export function BrowserApp() {
           className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#202124] px-3 py-1.5 sm:px-4"
           onSubmit={(e) => {
             e.preventDefault();
-            navigate(address);
+            navigate(address || START_URL);
           }}
         >
           <LockIcon />
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            className="min-w-0 flex-1 bg-transparent text-xs text-white/90 outline-none sm:text-sm"
+            placeholder="Search or enter address"
+            className="min-w-0 flex-1 bg-transparent text-xs text-white/90 outline-none placeholder:text-white/30 sm:text-sm"
             spellCheck={false}
           />
           <StarIcon />
@@ -158,7 +174,7 @@ export function BrowserApp() {
               type="button"
               title={bm.title}
               onClick={() => navigate(bm.url)}
-              className="rounded px-2 py-1 text-[11px] text-white/50 hover:bg-white/10 hover:text-white/80"
+              className="cursor-pointer rounded px-2 py-1 text-[11px] text-white/50 hover:bg-white/10 hover:text-white/80"
             >
               {bm.title}
             </button>
@@ -168,19 +184,115 @@ export function BrowserApp() {
 
       {/* Page */}
       <div className="relative min-h-0 flex-1 bg-[#202124]">
-        <iframe
-          key={active.url}
-          title={active.title}
-          src={active.url}
-          className="absolute inset-0 h-full w-full border-0 bg-white"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        />
+        {active.url === START_URL ? (
+          <StartPage onNavigate={navigate} onOpenExternal={openExternal} />
+        ) : canEmbedInFrame(active.url) ? (
+          <iframe
+            key={active.url}
+            title={active.title}
+            src={active.url}
+            className="absolute inset-0 h-full w-full border-0 bg-white"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
+        ) : active.url.startsWith("/") ? (
+          <iframe
+            key={active.url}
+            title={active.title}
+            src={active.url}
+            className="absolute inset-0 h-full w-full border-0 bg-white"
+          />
+        ) : (
+          <ExternalPage
+            url={active.url}
+            title={active.title}
+            onOpen={() => openExternal(active.url)}
+          />
+        )}
       </div>
     </div>
   );
 }
 
+function StartPage({
+  onNavigate,
+  onOpenExternal,
+}: {
+  onNavigate: (url: string) => void;
+  onOpenExternal: (url: string) => void;
+}) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center overflow-auto p-6">
+      <p className="font-[family-name:var(--font-display)] text-2xl font-semibold text-white/90">
+        {profile.name}
+      </p>
+      <p className="mt-1 text-sm text-white/45">{profile.tagline}</p>
+
+      <div className="mt-8 grid w-full max-w-lg gap-3 sm:grid-cols-2">
+        {profile.bookmarks.map((bm) => (
+          <button
+            key={bm.title}
+            type="button"
+            onClick={() => {
+              if (bm.url.startsWith("/") || canEmbedInFrame(bm.url)) {
+                onNavigate(bm.url);
+              } else {
+                onOpenExternal(bm.url);
+              }
+            }}
+            className="flex cursor-pointer flex-col items-start rounded-xl border border-white/10 bg-white/5 p-4 text-left transition-colors hover:border-white/20 hover:bg-white/8"
+          >
+            <span className="text-sm font-semibold text-white/90">{bm.title}</span>
+            <span className="mt-1 text-xs text-white/45">{bm.desc}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ExternalPage({
+  url,
+  title,
+  onOpen,
+}: {
+  url: string;
+  title: string;
+  onOpen: () => void;
+}) {
+  const bookmark = profile.bookmarks.find((b) => b.url === url);
+  let hostname = url;
+  try {
+    hostname = new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    /* keep url */
+  }
+
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-5 p-8 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/8">
+        <GlobeIcon />
+      </div>
+      <div>
+        <h2 className="text-lg font-semibold text-white">{title || hostname}</h2>
+        <p className="mt-1 text-sm text-white/45">{hostname}</p>
+      </div>
+      <p className="max-w-sm text-sm text-white/50">
+        {bookmark?.desc ??
+          "This site can't be shown here. Click below to open it in your browser."}
+      </p>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="cursor-pointer rounded-full bg-[#8ab4f8] px-6 py-2.5 text-sm font-medium text-[#202124] transition-opacity hover:opacity-90"
+      >
+        Open {title || hostname}
+      </button>
+    </div>
+  );
+}
+
 function bookmarkTitle(url: string) {
+  if (url === START_URL) return "New Tab";
   const hit = profile.bookmarks.find((b) => b.url === url);
   if (hit) return hit.title;
   try {
@@ -207,10 +319,18 @@ function ToolbarBtn({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-7 w-7 items-center justify-center rounded-full text-white/70 hover:bg-white/10 disabled:opacity-30 sm:h-8 sm:w-8"
+      className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-white/70 hover:bg-white/10 disabled:cursor-default disabled:opacity-30 sm:h-8 sm:w-8"
     >
       {children}
     </button>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-white/60" aria-hidden>
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm7.93 9h-3.4a15.9 15.9 0 0 0-1.14-4.58A8.03 8.03 0 0 1 19.93 11ZM12 4c.95 1.6 1.6 3.5 1.87 5.5H10.13C10.4 7.5 11.05 5.6 12 4ZM4.07 13h3.4c.2 1.58.6 3.1 1.14 4.58A8.03 8.03 0 0 1 4.07 13Zm3.4-2h-3.4a8.03 8.03 0 0 1 2.54-4.58A15.9 15.9 0 0 0 7.47 11ZM12 20c-.95-1.6-1.6-3.5-1.87-5.5h3.74C13.6 16.5 12.95 18.4 12 20Zm4.39-1.42c.54-1.48.94-3 .14-4.58h3.4a8.03 8.03 0 0 1-2.54 4.58ZM14.53 11c-.27-2-.92-3.9-1.87-5.5.95 1.6 1.6 3.5 1.87 5.5Z" />
+    </svg>
   );
 }
 

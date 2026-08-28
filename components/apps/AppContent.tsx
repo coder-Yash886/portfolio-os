@@ -16,13 +16,6 @@ const FILE_SECTIONS = [
   { label: "Contact", icon: MailIcon },
 ] as const;
 
-const ABOUT_STATS = [
-  { value: "250+", label: "LeetCode" },
-  { value: "270+", label: "CodeChef" },
-  { value: "2★", label: "CodeChef Rating" },
-  { value: profile.cgpa, label: "CGPA" },
-] as const;
-
 type Props = {
   appId: AppId;
 };
@@ -212,24 +205,13 @@ function FilesApp() {
         Download Resume
       </a>
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="hidden shrink-0 items-center gap-2 border-b border-white/8 bg-white/[0.02] px-4 py-2.5 backdrop-blur-sm md:flex">
-          <HomeIcon />
-          <span className="text-white/25">/</span>
-          <span className="text-xs font-medium text-white/80">{FILE_SECTIONS[active].label}</span>
-          <span className="ml-auto rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/40">
-            {active + 1} of {FILE_SECTIONS.length}
-          </span>
-        </header>
-
-        <div className="min-h-0 flex-1 overflow-auto p-4 sm:p-6 md:p-8">
-          <div key={active} className="files-section-enter">
-            {active === 0 && <AboutSection />}
-            {active === 1 && <ProjectsSection />}
-            {active === 2 && <ExperienceSection />}
-            {active === 3 && <ContributionsSection />}
-            {active === 4 && <ContactSection />}
-          </div>
+      <div className="min-h-0 min-w-0 flex-1 overflow-auto p-4 sm:p-6 md:p-8">
+        <div key={active} className="files-section-enter">
+          {active === 0 && <AboutSection />}
+          {active === 1 && <ProjectsSection />}
+          {active === 2 && <ExperienceSection />}
+          {active === 3 && <ContributionsSection />}
+          {active === 4 && <ContactSection />}
         </div>
       </div>
     </div>
@@ -239,43 +221,22 @@ function FilesApp() {
 function AboutSection() {
   return (
     <div className="w-full max-w-5xl">
-      <div className="files-page-header">
-        <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          About Me
-        </h1>
-        <p className="mt-1.5 text-sm text-[color:var(--highlight)]">{profile.title}</p>
-        <p className="mt-1 text-xs text-white/40">
-          {profile.college} · {profile.year}
-        </p>
-      </div>
+      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        About Me
+      </h1>
+      <p className="mt-1 text-sm text-[color:var(--accent)]">{profile.title}</p>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {ABOUT_STATS.map((stat) => (
-          <div
-            key={stat.label}
-            className="files-stat-card rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center transition-colors hover:border-[color:var(--accent)]/30 hover:bg-white/[0.05]"
-          >
-            <p className="font-[family-name:var(--font-display)] text-xl font-bold text-white sm:text-2xl">
-              {stat.value}
-            </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/45 sm:text-xs">
-              {stat.label}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 space-y-4">
-        <section className="files-content-card">
+      <div className="mt-5 space-y-5 sm:mt-6">
+        <section>
           <h2 className="text-sm font-semibold text-white sm:text-base">Who am I?</h2>
-          <p className="mt-2.5 text-sm leading-relaxed text-white/75 sm:text-[15px]">
+          <p className="mt-2 text-sm leading-relaxed text-white/75 sm:text-[15px]">
             {profile.about.whoAmI}
           </p>
         </section>
 
-        <section className="files-content-card">
+        <section>
           <h2 className="text-sm font-semibold text-white sm:text-base">What have I done?</h2>
-          <p className="mt-2.5 text-sm leading-relaxed text-white/75 sm:text-[15px]">
+          <p className="mt-2 text-sm leading-relaxed text-white/75 sm:text-[15px]">
             {profile.about.whatDone}
           </p>
           <p className="mt-3 text-sm leading-relaxed text-white/75 sm:text-[15px]">
@@ -283,17 +244,7 @@ function AboutSection() {
           </p>
         </section>
 
-        <section className="files-content-card">
-          <p className="text-sm leading-relaxed text-white/75 sm:text-[15px]">
-            {profile.about.closing}
-          </p>
-          <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--highlight)]">
-            <SparkleIcon />
-            {profile.about.thankYou}
-          </p>
-        </section>
-
-        <section className="files-content-card">
+        <section>
           <h2 className="text-xs font-semibold uppercase tracking-wide text-white/45 sm:text-sm">
             Skills
           </h2>
@@ -301,7 +252,7 @@ function AboutSection() {
             {profile.skills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-white/80 transition-colors hover:border-[color:var(--accent)]/35 hover:bg-[color:var(--accent)]/10 hover:text-white"
+                className="rounded-md border border-[color:var(--border-subtle)] bg-white/5 px-2.5 py-1 text-xs text-white/80"
               >
                 {skill}
               </span>
@@ -610,22 +561,6 @@ function MailIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm0 2 8 5 8-5H4Zm16 8V9.5l-8 5-8-5V16h16Z" />
-    </svg>
-  );
-}
-
-function HomeIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/40" aria-hidden>
-      <path d="M12 3 3 10.5V20a1 1 0 0 0 1 1h6v-6h4v6h6a1 1 0 0 0 1-1v-9.5L12 3Z" />
-    </svg>
-  );
-}
-
-function SparkleIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 2 9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2Z" />
     </svg>
   );
 }
