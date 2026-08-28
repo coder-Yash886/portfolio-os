@@ -569,16 +569,16 @@ function ContactSection() {
 
 function AboutApp() {
   return (
-    <div className="flex h-full min-h-[160px] flex-col gap-4 overflow-auto p-4 sm:gap-5 sm:p-8">
-      <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold text-white sm:text-2xl">
+    <div className="flex h-full min-h-[200px] flex-col gap-5 overflow-auto p-5 sm:gap-6 sm:p-8">
+      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-white sm:text-3xl">
         {profile.aboutPortfolio.title}
       </h1>
-      <div className="max-w-lg space-y-4 text-sm leading-relaxed text-white/75 sm:text-[15px]">
+      <div className="max-w-2xl space-y-4 text-sm leading-relaxed text-white/75 sm:text-base">
         <p>{profile.aboutPortfolio.welcome}</p>
         <p>{profile.aboutPortfolio.journey}</p>
         <p>{profile.aboutPortfolio.future}</p>
       </div>
-      <p className="text-xs text-white/40">
+      <p className="text-sm text-white/40">
         Built by {profile.fullName} · {profile.college}
       </p>
     </div>

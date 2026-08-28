@@ -57,7 +57,6 @@ export function TopBar() {
         <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-[color:var(--accent)] text-[10px] font-bold text-[color:var(--accent-fg)]">
           Y
         </span>
-        <span className="hidden truncate sm:inline">{profile.name} OS</span>
       </div>
       <time className="absolute left-1/2 -translate-x-1/2 tabular-nums tracking-wide">
         {now}
