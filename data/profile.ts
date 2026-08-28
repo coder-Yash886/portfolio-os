@@ -24,8 +24,8 @@ export const profile = {
   bookmarks: [
     { title: "GitHub", url: "https://github.com/coder-Yash886", desc: "Projects & open source" },
     { title: "LinkedIn", url: "https://www.linkedin.com/in/yash-kumar-2a7076325/", desc: "Professional profile" },
-    { title: "LeetCode", url: "https://leetcode.com/u/coder-Yash886/", desc: "250+ DSA problems" },
-    { title: "CodeChef", url: "https://www.codechef.com/users/coder_yash886", desc: "2★ · 270+ problems" },
+    { title: "LeetCode", url: "https://leetcode.com/u/Yk_coder886/", desc: "250+ DSA problems" },
+    { title: "CodeChef", url: "https://www.codechef.com/users/yash886", desc: "2★ · 270+ problems" },
     { title: "Resume", url: "/resume.pdf", desc: "Download PDF" },
   ],
   location: "Ghaziabad, U.P., India",
