@@ -30,14 +30,14 @@ export const profile = {
   ],
   location: "Ghaziabad, U.P., India",
   college: "Ajay Kumar Garg Engineering College",
-  education: "B.Tech Information Technology",
+  education: "B.Tech Computer Science & Information Technology",
   educationYears: "Aug 2024 – May 2028",
   cgpa: "8.23",
   year: "3rd-year",
   about: {
-    whoAmI:
-      "I'm a 3rd-year B.Tech IT student at Ajay Kumar Garg Engineering College, with hands-on experience in backend and full-stack development.",
-    whatDone:
+    intro:
+      "Hey! I am Yash. I am a 3rd-year B.Tech CSIT student at Ajay Kumar Garg Engineering College, with hands-on experience in backend and full-stack development.",
+    body:
       "I've built projects like Nexora AI, an AI-powered video meeting platform, and Brain-Dock, a full-stack content management platform. I've also contributed to OWASP's cve-lite-cli and built scalable Node.js/Express APIs supporting 200+ concurrent participants.",
     achievements:
       "I've solved 250+ LeetCode problems, 270+ CodeChef problems, and achieved a 2★ CodeChef rating (1458).",

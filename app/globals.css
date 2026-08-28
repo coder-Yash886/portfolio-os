@@ -3,10 +3,10 @@
 :root {
   --background: #0a0e14;
   --foreground: #eef2f8;
-  --accent: #3584e4;
+  --accent: #78a203;
   --accent-fg: #ffffff;
-  --accent-glow: rgba(53, 132, 228, 0.45);
-  --highlight: #62a0ea;
+  --accent-glow: rgba(120, 162, 3, 0.4);
+  --highlight: #9bcf00;
   --topbar: rgba(10, 14, 22, 0.78);
   --topbar-fg: #eef2f8;
   --topbar-muted: #8b9cb5;
@@ -15,7 +15,7 @@
   --window: rgba(14, 18, 28, 0.94);
   --window-title: rgba(8, 12, 20, 0.92);
   --window-fg: #e8edf5;
-  --border-subtle: rgba(98, 160, 234, 0.18);
+  --border-subtle: rgba(120, 162, 3, 0.2);
   /* Spider-Man sits upper-right in the portrait wallpaper */
   --wallpaper-focus-x: 72%;
   --wallpaper-focus-y: 28%;
@@ -127,71 +127,29 @@ textarea {
   pointer-events: none;
 }
 
-/* File Explorer polish */
+/* File Explorer */
 .files-sidebar {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.15) 100%);
+  background: rgba(0, 0, 0, 0.25);
   transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .files-download-btn {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--highlight) 100%);
-  box-shadow: 0 4px 16px var(--accent-glow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--accent);
+  transition: opacity 0.15s ease;
 }
 
 .files-download-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px var(--accent-glow);
-}
-
-.files-download-btn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.18) 50%,
-    transparent 60%
-  );
-  transform: translateX(-120%);
-  transition: transform 0.5s ease;
-}
-
-.files-download-btn:hover::after {
-  transform: translateX(120%);
-}
-
-.files-content-card {
-  border-radius: 0.875rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.025);
-  padding: 1rem 1.125rem;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.files-content-card:hover {
-  border-color: rgba(98, 160, 234, 0.2);
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.files-page-header {
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 0.9;
 }
 
 .files-section-enter {
-  animation: files-fade-in 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.files-timeline-item {
-  animation: files-fade-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: files-fade-in 0.2s ease both;
 }
 
 @keyframes files-fade-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;

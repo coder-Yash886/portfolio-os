@@ -15,6 +15,36 @@ function newTab(url = START_URL, title = "New Tab"): Tab {
   return { id: `tab-${Date.now()}-${Math.random()}`, title, url };
 }
 
+function resolveAddress(raw: string): { url: string; title: string } {
+  const input = raw.trim();
+  if (!input || input.toLowerCase() === "new tab") {
+    return { url: START_URL, title: "New Tab" };
+  }
+  if (input === START_URL) {
+    return { url: START_URL, title: "New Tab" };
+  }
+  if (input.startsWith("/")) {
+    return { url: input, title: bookmarkTitle(input) };
+  }
+
+  if (/^https?:\/\//i.test(input)) {
+    return { url: input, title: bookmarkTitle(input) };
+  }
+
+  const noSpaces = input.replace(/\s/g, "");
+  const looksLikeDomain =
+    /^[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(noSpaces) ||
+    /^localhost(:\d+)?(\/\S*)?$/i.test(noSpaces);
+
+  if (looksLikeDomain && !input.includes(" ")) {
+    const url = `https://${noSpaces}`;
+    return { url, title: bookmarkTitle(url) };
+  }
+
+  const searchUrl = `https://www.google.com/search?igu=1&q=${encodeURIComponent(input)}`;
+  return { url: searchUrl, title: input };
+}
+
 function canEmbedInFrame(url: string) {
   if (url === START_URL || url.startsWith("/")) return false;
   try {
@@ -37,17 +67,7 @@ export function BrowserApp() {
 
   const navigate = useCallback(
     (raw: string) => {
-      let url = raw.trim();
-      if (!url) return;
-
-      if (url === "new tab" || url === START_URL) {
-        url = START_URL;
-      } else if (!/^https?:\/\//i.test(url) && !url.startsWith("/")) {
-        url = `https://${url}`;
-      }
-
-      const title =
-        url === START_URL ? "New Tab" : bookmarkTitle(url);
+      const { url, title } = resolveAddress(raw);
 
       setTabs((prev) =>
         prev.map((t) => (t.id === activeId ? { ...t, url, title } : t)),
@@ -160,7 +180,7 @@ export function BrowserApp() {
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Search or enter address"
+            placeholder="Search Google or enter a URL"
             className="min-w-0 flex-1 bg-transparent text-xs text-white/90 outline-none placeholder:text-white/30 sm:text-sm"
             spellCheck={false}
           />
@@ -296,7 +316,11 @@ function bookmarkTitle(url: string) {
   const hit = profile.bookmarks.find((b) => b.url === url);
   if (hit) return hit.title;
   try {
-    return new URL(url).hostname.replace(/^www\./, "");
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("google.com") && parsed.pathname === "/search") {
+      return parsed.searchParams.get("q") || "Google Search";
+    }
+    return parsed.hostname.replace(/^www\./, "");
   } catch {
     return "New Tab";
   }
