@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:interview-pdf": "npx md-to-pdf docs/PORTFOLIO_INTERVIEW_GUIDE.md && node -e \"require('fs').copyFileSync('docs/PORTFOLIO_INTERVIEW_GUIDE.pdf','public/Portfolio_Interview_Guide.pdf')\""
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

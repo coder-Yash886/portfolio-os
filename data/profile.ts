@@ -81,6 +81,16 @@ export const profile = {
       ],
     },
     {
+      slug: "portfolio-os",
+      name: "Portfolio OS",
+      folderLabel: "Portfolio OS",
+      description:
+        "Portfolio OS is an interactive desktop-style portfolio inspired by the OS-portfolio idea — built as an original teal/slate desktop shell with a pixel-perfect Ubuntu-inspired UI. Features draggable windows, an app launcher, terminal, and file explorer — all powered by Next.js, TypeScript, Tailwind CSS v4, and Zustand.",
+      github: "https://github.com/coder-Yash886/portfolio-os",
+      liveUrl: "https://yashkumar.me",
+      tags: ["Next.js", "TypeScript", "Tailwind CSS", "Zustand", "Framer Motion", "Vercel"],
+    },
+    {
       slug: "brain-dock",
       name: "Brain-Dock",
       folderLabel: "Brain-Dock",
