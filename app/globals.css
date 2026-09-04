@@ -16,9 +16,9 @@
   --window-title: rgba(8, 12, 20, 0.92);
   --window-fg: #e8edf5;
   --border-subtle: rgba(120, 162, 3, 0.2);
-  /* Spider-Man sits upper-right in the portrait wallpaper */
-  --wallpaper-focus-x: 72%;
-  --wallpaper-focus-y: 28%;
+  /* Cinematic noir figure stays centered in the reflective city */
+  --wallpaper-focus-x: 50%;
+  --wallpaper-focus-y: 48%;
 }
 
 @theme inline {
@@ -95,11 +95,11 @@ textarea {
   opacity: 1;
 }
 
-/* Portrait phones: wallpaper is native vertical — center on character */
+/* Portrait: keep the walking figure in frame on landscape footage */
 @media (orientation: portrait) {
   .wallpaper-poster,
   .wallpaper-video {
-    object-position: 68% 32%;
+    object-position: 50% 42%;
   }
 }
 
@@ -115,8 +115,8 @@ textarea {
 
 .desktop-vignette {
   background:
-    radial-gradient(ellipse 90% 80% at 58% 38%, transparent 45%, rgba(0, 0, 0, 0.35) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 12%, transparent 88%, rgba(0, 0, 0, 0.35) 100%);
+    radial-gradient(ellipse 85% 75% at 50% 48%, transparent 40%, rgba(0, 0, 0, 0.45) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 14%, transparent 86%, rgba(0, 0, 0, 0.5) 100%);
   pointer-events: none;
 }
 

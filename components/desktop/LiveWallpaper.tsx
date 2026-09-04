@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import Hls from "hls.js";
 import { wallpaper } from "@/lib/wallpaper";
 
 export function LiveWallpaper() {
@@ -15,8 +14,6 @@ export function LiveWallpaper() {
     const video = videoRef.current;
     if (!video) return;
 
-    let hls: Hls | null = null;
-
     const markReady = () => setReady(true);
 
     const tryPlay = () => {
@@ -24,24 +21,16 @@ export function LiveWallpaper() {
       video.play().catch(() => markReady());
     };
 
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = wallpaper.hlsUrl;
-      video.addEventListener("loadeddata", tryPlay, { once: true });
-      return;
-    }
+    video.src = wallpaper.videoUrl;
+    video.addEventListener("loadeddata", tryPlay, { once: true });
+    video.addEventListener("error", markReady, { once: true });
 
-    if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true, maxBufferLength: 30 });
-      hls.loadSource(wallpaper.hlsUrl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, tryPlay);
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) markReady();
-      });
-      return () => hls?.destroy();
-    }
+    if (video.readyState >= 2) tryPlay();
 
-    markReady();
+    return () => {
+      video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("error", markReady);
+    };
   }, []);
 
   const stageStyle: CSSProperties = {
