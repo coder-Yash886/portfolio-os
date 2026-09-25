@@ -26,8 +26,8 @@ export function Desktop() {
 
       <TopBar />
 
-      <main className="desktop-workspace absolute inset-0 pt-8 sm:pl-16 md:pl-18">
-        <div className="pointer-events-none absolute left-4 sm:left-24 top-12 max-w-[min(100%,280px)] sm:top-16 sm:max-w-sm">
+      <main className="desktop-workspace absolute inset-0 pt-8 sm:pl-20 md:pl-22">
+        <div className="pointer-events-none absolute left-4 sm:left-24 md:left-28 top-12 max-w-[min(100%,280px)] sm:top-16 sm:max-w-sm">
           <p className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white/90 drop-shadow-lg sm:text-4xl md:text-5xl">
             {profile.name}
           </p>

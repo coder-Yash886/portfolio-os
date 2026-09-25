@@ -52,17 +52,20 @@ export function getWindowLayout(app: AppDefinition) {
     };
   }
 
-  const defaultW = isTablet
-    ? Math.min(app.defaultSize.width, maxW * 0.95)
-    : Math.min(app.defaultSize.width, maxW);
-  const defaultH = isTablet
+  // On desktop/tablet, size the window to comfortably fit on the left half
+  const targetW = isTablet
+    ? Math.min(app.defaultSize.width, maxW * 0.85)
+    : Math.min(app.defaultSize.width, Math.max(680, Math.min(760, vw * 0.52)));
+  const targetH = isTablet
     ? Math.min(app.defaultSize.height, maxH * 0.85)
-    : Math.min(app.defaultSize.height, maxH);
+    : Math.min(app.defaultSize.height, maxH * 0.9);
 
-  const width = Math.min(Math.max(defaultW, app.minSize.width), maxW);
-  const height = Math.min(Math.max(defaultH, app.minSize.height), maxH);
-  const x = Math.max(leftPad, Math.round(leftPad + (vw - leftPad - width) / 2 - pad));
-  const y = Math.max(TOP_BAR + pad / 2, Math.round((vh - height) / 2 - 8));
+  const width = Math.min(Math.max(targetW, app.minSize.width), maxW);
+  const height = Math.min(Math.max(targetH, app.minSize.height), maxH);
+  
+  // Position on the left side so the right side artwork (character & car) is completely visible!
+  const x = isTablet ? Math.max(leftPad, Math.round((vw - width) / 2)) : leftPad + 12;
+  const y = Math.max(TOP_BAR + 16, Math.round((vh - height) / 2 - 12));
 
   return { x, y, width, height, maximized: false };
 }
