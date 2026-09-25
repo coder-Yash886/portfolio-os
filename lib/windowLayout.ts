@@ -1,16 +1,16 @@
 import type { AppDefinition } from "@/lib/apps";
 
 export const TOP_BAR = 32;
-export const DOCK_MOBILE = 130;
-export const DOCK_DESKTOP = 110;
+export const DOCK_MOBILE = 68;
+export const DOCK_DESKTOP_WIDTH = 72;
 
 export function getMaximizedInsets() {
   const { isMobile } = getViewport();
   return {
     top: TOP_BAR,
-    left: 0,
+    left: isMobile ? 0 : DOCK_DESKTOP_WIDTH,
     right: 0,
-    bottom: isMobile ? DOCK_MOBILE : DOCK_DESKTOP,
+    bottom: isMobile ? DOCK_MOBILE : 0,
   };
 }
 
@@ -37,10 +37,10 @@ export function getViewport(): ViewportInfo {
 
 export function getWindowLayout(app: AppDefinition) {
   const { width: vw, height: vh, isMobile, isTablet } = getViewport();
-  const pad = isMobile ? 6 : 12;
-  const dock = isMobile ? DOCK_MOBILE : DOCK_DESKTOP;
-  const maxW = vw - pad * 2;
-  const maxH = vh - TOP_BAR - dock - pad;
+  const pad = isMobile ? 6 : 16;
+  const leftPad = isMobile ? pad : DOCK_DESKTOP_WIDTH + pad;
+  const maxW = vw - leftPad - pad;
+  const maxH = vh - TOP_BAR - (isMobile ? DOCK_MOBILE : pad * 2);
 
   if (isMobile) {
     return {
@@ -53,15 +53,15 @@ export function getWindowLayout(app: AppDefinition) {
   }
 
   const defaultW = isTablet
-    ? Math.min(app.defaultSize.width, vw * 0.92)
-    : app.defaultSize.width;
+    ? Math.min(app.defaultSize.width, maxW * 0.95)
+    : Math.min(app.defaultSize.width, maxW);
   const defaultH = isTablet
-    ? Math.min(app.defaultSize.height, vh * 0.78)
-    : app.defaultSize.height;
+    ? Math.min(app.defaultSize.height, maxH * 0.85)
+    : Math.min(app.defaultSize.height, maxH);
 
   const width = Math.min(Math.max(defaultW, app.minSize.width), maxW);
   const height = Math.min(Math.max(defaultH, app.minSize.height), maxH);
-  const x = Math.max(pad, Math.round((vw - width) / 2));
+  const x = Math.max(leftPad, Math.round(leftPad + (vw - leftPad - width) / 2 - pad));
   const y = Math.max(TOP_BAR + pad / 2, Math.round((vh - height) / 2 - 8));
 
   return { x, y, width, height, maximized: false };
@@ -75,12 +75,12 @@ export function clampWindowPosition(
 ) {
   const { width: vw, height: vh, isMobile } = getViewport();
   const pad = isMobile ? 6 : 12;
-  const dock = isMobile ? DOCK_MOBILE : DOCK_DESKTOP;
+  const minX = isMobile ? pad : DOCK_DESKTOP_WIDTH + pad;
   const maxX = vw - winWidth - pad;
-  const maxY = vh - winHeight - dock;
+  const maxY = vh - winHeight - (isMobile ? DOCK_MOBILE : pad);
 
   return {
-    x: Math.min(Math.max(pad, x), Math.max(pad, maxX)),
+    x: Math.min(Math.max(minX, x), Math.max(minX, maxX)),
     y: Math.min(Math.max(TOP_BAR, y), Math.max(TOP_BAR, maxY)),
   };
 }
@@ -95,9 +95,8 @@ export function clampWindowSize(
 ) {
   const { width: vw, height: vh, isMobile } = getViewport();
   const pad = isMobile ? 6 : 12;
-  const dock = isMobile ? DOCK_MOBILE : DOCK_DESKTOP;
   const maxW = vw - x - pad;
-  const maxH = vh - y - dock;
+  const maxH = vh - y - (isMobile ? DOCK_MOBILE : pad);
 
   const w = Math.min(Math.max(width, minWidth), Math.max(minWidth, maxW));
   const h = Math.min(Math.max(height, minHeight), Math.max(minHeight, maxH));
@@ -105,3 +104,4 @@ export function clampWindowSize(
 
   return { x: pos.x, y: pos.y, width: w, height: h };
 }
+

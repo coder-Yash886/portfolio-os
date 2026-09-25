@@ -16,9 +16,9 @@
   --window-title: rgba(8, 12, 20, 0.92);
   --window-fg: #e8edf5;
   --border-subtle: rgba(120, 162, 3, 0.2);
-  /* Cinematic noir figure stays centered in the reflective city */
+  /* Porsche night anime wallpaper centering */
   --wallpaper-focus-x: 50%;
-  --wallpaper-focus-y: 48%;
+  --wallpaper-focus-y: 50%;
 }
 
 @theme inline {
@@ -95,11 +95,11 @@ textarea {
   opacity: 1;
 }
 
-/* Portrait: keep the walking figure in frame on landscape footage */
+/* Portrait: keep character & car in frame */
 @media (orientation: portrait) {
   .wallpaper-poster,
   .wallpaper-video {
-    object-position: 50% 42%;
+    object-position: 50% 50%;
   }
 }
 

@@ -17,11 +17,10 @@ export function WindowTabs() {
 
   return (
     <div
-      className="pointer-events-auto absolute inset-x-0 z-50 flex justify-center px-2"
-      style={{ bottom: "calc(4.25rem + env(safe-area-inset-bottom, 0px))" }}
+      className="pointer-events-auto absolute inset-x-0 bottom-20 sm:bottom-4 z-40 flex justify-center px-2 pointer-events-none"
     >
       <div
-        className="flex max-w-[calc(100dvw-0.5rem)] gap-1.5 overflow-x-auto rounded-2xl border border-[color:var(--border-subtle)] bg-[color:var(--dock)] p-1.5 shadow-lg backdrop-blur-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-2xl sm:gap-2 sm:p-2"
+        className="pointer-events-auto flex max-w-[calc(100dvw-0.5rem)] gap-1.5 overflow-x-auto rounded-2xl border border-white/10 bg-[#16171d]/85 p-1.5 shadow-xl backdrop-blur-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-2xl sm:gap-2 sm:p-2"
         role="tablist"
         aria-label="Open windows"
       >

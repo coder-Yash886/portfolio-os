@@ -16,49 +16,132 @@ const ICONS: Record<AppId, ReactNode> = {
 export function Dock() {
   const windows = useDesktopStore((s) => s.windows);
   const openApp = useDesktopStore((s) => s.openApp);
+  const focusedId = useDesktopStore((s) => s.focusedId);
 
   const running = new Set(
     windows.filter((w) => !w.minimized).map((w) => w.appId),
   );
 
   return (
-    <nav
-      aria-label="Application dock"
-      className="pointer-events-auto absolute bottom-2 left-1/2 z-50 flex max-w-[calc(100dvw-0.75rem)] -translate-x-1/2 items-end gap-1 overflow-x-auto rounded-2xl border border-[color:var(--border-subtle)] bg-[color:var(--dock)] px-1.5 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:bottom-4 sm:gap-1.5 sm:px-2.5 sm:py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}
-    >
-      {DOCK_ORDER.map((appId) => {
-        const app = APPS[appId];
-        const isRunning = running.has(appId);
-        return (
+    <>
+      {/* Desktop: Left-side Vertical Dock */}
+      <aside
+        aria-label="Application dock"
+        className="pointer-events-auto fixed left-0 top-8 bottom-0 z-50 hidden sm:flex w-16 md:w-18 flex-col items-center py-3 space-y-3 border-r border-white/10 bg-[#16171d]/85 backdrop-blur-xl shadow-[8px_0_30px_rgba(0,0,0,0.5)] select-none"
+      >
+        <div className="flex flex-col items-center gap-3 w-full px-2">
+          {DOCK_ORDER.map((appId) => {
+            const app = APPS[appId];
+            const isRunning = running.has(appId);
+            const isFocused = windows.find((w) => w.id === focusedId)?.appId === appId;
+
+            return (
+              <div key={appId} className="group relative flex w-full justify-center">
+                <button
+                  type="button"
+                  onClick={() => openApp(appId)}
+                  aria-label={app.dockLabel}
+                  className={`relative flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--accent)] ${
+                    isFocused
+                      ? "bg-white/15 shadow-md shadow-white/5 ring-1 ring-white/20"
+                      : isRunning
+                        ? "bg-white/5"
+                        : "opacity-85 hover:opacity-100"
+                  }`}
+                >
+                  <span className="flex h-8 w-8 items-center justify-center">
+                    {ICONS[appId]}
+                  </span>
+
+                  {/* Active Indicator Dot on the Left edge */}
+                  {isRunning && (
+                    <span className="absolute left-1 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-[#ff3366] shadow-[0_0_8px_#ff3366]" />
+                  )}
+                </button>
+
+                {/* Tooltip popping to the RIGHT (inside screen) */}
+                <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 hidden group-hover:flex items-center gap-1.5 rounded-xl border border-white/15 bg-[#1b1c24]/95 px-3 py-1.5 text-xs font-semibold text-white shadow-2xl backdrop-blur-md whitespace-nowrap z-50 animate-in fade-in zoom-in-95 duration-150">
+                  {app.dockLabel}
+                  {isRunning && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#ff3366]" />
+                  )}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Spacer */}
+        <div className="flex-1 w-full" />
+
+        {/* Show Apps / Launcher Button at Bottom */}
+        <div className="group relative flex w-full justify-center px-2 pb-2">
           <button
-            key={appId}
             type="button"
-            onClick={() => openApp(appId)}
-            title={app.dockLabel}
-            className="group relative flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl transition-transform duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)] sm:h-12 sm:w-12 sm:hover:-translate-y-1.5"
+            onClick={() => openApp("store")}
+            aria-label="Show Applications"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--accent)]"
           >
-            <span className="flex h-8 w-8 items-center justify-center sm:h-9 sm:w-9">
-              {ICONS[appId]}
-            </span>
-            <span
-              className={`mt-0.5 h-1 w-1 rounded-full transition-opacity ${
-                isRunning ? "bg-[color:var(--accent)] opacity-100" : "opacity-0"
-              }`}
-            />
-            <span className="pointer-events-none absolute -top-8 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-black/80 px-2 py-0.5 text-[11px] text-white group-hover:block">
-              {app.dockLabel}
-            </span>
+            <LauncherIcon />
           </button>
-        );
-      })}
-    </nav>
+          <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 hidden group-hover:flex items-center rounded-xl border border-white/15 bg-[#1b1c24]/95 px-3 py-1.5 text-xs font-semibold text-white shadow-2xl backdrop-blur-md whitespace-nowrap z-50">
+            Show Applications
+          </span>
+        </div>
+      </aside>
+
+      {/* Mobile: Bottom Floating Dock */}
+      <nav
+        aria-label="Application dock mobile"
+        className="pointer-events-auto fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex sm:hidden max-w-[calc(100dvw-1rem)] items-center gap-1 overflow-x-auto rounded-2xl border border-white/15 bg-[#16171d]/90 px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}
+      >
+        {DOCK_ORDER.map((appId) => {
+          const app = APPS[appId];
+          const isRunning = running.has(appId);
+          return (
+            <button
+              key={appId}
+              type="button"
+              onClick={() => openApp(appId)}
+              title={app.dockLabel}
+              className="relative flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl active:scale-90"
+            >
+              <span className="flex h-7 w-7 items-center justify-center">
+                {ICONS[appId]}
+              </span>
+              <span
+                className={`mt-0.5 h-1 w-1 rounded-full transition-opacity ${
+                  isRunning ? "bg-[#ff3366] opacity-100 shadow-[0_0_6px_#ff3366]" : "opacity-0"
+                }`}
+              />
+            </button>
+          );
+        })}
+      </nav>
+    </>
+  );
+}
+
+function LauncherIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 48 48" fill="none" aria-hidden>
+      <circle cx="14" cy="14" r="4.5" fill="#ff3366" />
+      <circle cx="24" cy="14" r="4.5" fill="#e8edf5" />
+      <circle cx="34" cy="14" r="4.5" fill="#e8edf5" />
+      <circle cx="14" cy="24" r="4.5" fill="#e8edf5" />
+      <circle cx="24" cy="24" r="4.5" fill="#ff3366" />
+      <circle cx="34" cy="24" r="4.5" fill="#e8edf5" />
+      <circle cx="14" cy="34" r="4.5" fill="#e8edf5" />
+      <circle cx="24" cy="34" r="4.5" fill="#e8edf5" />
+      <circle cx="34" cy="34" r="4.5" fill="#ff3366" />
+    </svg>
   );
 }
 
 function FilesIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden>
+    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden>
       <path d="M8 14h14l3 3h19v23H8V14z" fill="#9a9a9a" />
       <path d="M8 10h14l3 3h19v4H8v-7z" fill="#7cba3d" />
       <path d="M8 17h32v20H8V17z" fill="#c4c4c4" opacity="0.3" />
@@ -68,7 +151,7 @@ function FilesIcon() {
 
 function ChromeIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden>
+    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden>
       <circle cx="24" cy="24" r="22" fill="#fff" />
       <path d="M24 4a20 20 0 0 1 17.32 10H24V4z" fill="#ea4335" />
       <path d="M6.68 14A20 20 0 0 0 4 24a20 20 0 0 0 2.68 10h17.32L24 24 6.68 14z" fill="#34a853" />
@@ -83,7 +166,7 @@ function ChromeIcon() {
 
 function VSCodeIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden>
+    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden>
       <path
         d="M6 6l28 18-28 18V6z"
         fill="#0065a9"
@@ -102,7 +185,7 @@ function VSCodeIcon() {
 
 function TerminalIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden>
+    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden>
       <rect x="6" y="8" width="36" height="32" rx="6" fill="#3d3d3d" />
       <path
         d="M14 20l6 4-6 4"
@@ -119,7 +202,7 @@ function TerminalIcon() {
 
 function AppCenterIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden>
+    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden>
       <path
         d="M10 14c0-2.2 1.8-4 4-4h20c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H14c-2.2 0-4-1.8-4-4V14z"
         fill="#3584e4"
@@ -145,7 +228,7 @@ function AppCenterIcon() {
 
 function HelpIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden>
+    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden>
       <circle cx="24" cy="24" r="20" fill="#62a0ea" />
       <text
         x="24"
@@ -161,3 +244,4 @@ function HelpIcon() {
     </svg>
   );
 }
+
