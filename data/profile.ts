@@ -38,7 +38,7 @@ export const profile = {
     intro:
       "Hey! I am Yash. I am a 3rd-year B.Tech CSIT student at Ajay Kumar Garg Engineering College, with hands-on experience in backend and full-stack development.",
     body:
-      "I've built projects like Nexora AI, an AI-powered video meeting platform, and Brain-Dock, a full-stack content management platform. I've also contributed to OWASP's cve-lite-cli and built scalable Node.js/Express APIs supporting 200+ concurrent participants.",
+      "I've built projects like Nexora AI, an AI-powered video meeting platform, Maanak Mitra, an AI compliance copilot for Indian Standards, and Brain-Dock, a full-stack content management platform. I've also contributed to OWASP's cve-lite-cli and built scalable Node.js/Express APIs supporting 200+ concurrent participants.",
     achievements:
       "I've solved 250+ LeetCode problems, 270+ CodeChef problems, and achieved a 2★ CodeChef rating (1458).",
     closing:
@@ -78,6 +78,28 @@ export const profile = {
         "Google Gemini",
         "Inngest",
         "Vercel",
+      ],
+    },
+    {
+      slug: "maanak-mitra",
+      name: "Maanak Mitra (मानक मित्र)",
+      folderLabel: "Maanak Mitra",
+      description:
+        "Maanak Mitra (मानक मित्र) is an AI-powered regulatory intelligence and compliance copilot developed for Smart India Hackathon 2026 (Problem Statement ID: SIH26107, Ministry of Consumer Affairs — Bureau of Indian Standards). Designed to empower 6.3+ Crore MSMEs and manufacturers across India with intelligent standard discovery over 24,000+ Indian Standards (IS) using hybrid RAG (Dense BGE-M3 + BM25) and zero-hallucination catalog validation. Features a synchronized split-screen Gazette viewer with cited clause highlighting, a 5-step interactive certification wizard (ISI Mark vs CRS), Bhashini ULCA multilingual Indic voice copilot (Hindi, Tamil, etc.), and India ↔ Export equivalence mapping (ISO, IEC, ASTM).",
+      github: "https://github.com/raj-krr/maanak-mitra",
+      liveUrl: "https://www.maanak-mitra.me/",
+      tags: [
+        "FastAPI",
+        "Python",
+        "Next.js",
+        "TypeScript",
+        "Hybrid RAG",
+        "BGE-M3",
+        "Qdrant",
+        "PostgreSQL",
+        "Bhashini ULCA",
+        "Docker",
+        "Tailwind CSS",
       ],
     },
     {

@@ -23,7 +23,7 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 app.get("/api/projects", async (_req, res) => {
-  res.json({ projects: ["Nexora AI", "Brain-Dock"] });
+  res.json({ projects: ["Nexora AI", "Maanak Mitra", "Brain-Dock"] });
 });`,
   "page.tsx": `export default function Portfolio() {
   return (

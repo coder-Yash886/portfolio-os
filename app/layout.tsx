@@ -21,7 +21,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Yash Kumar — Full Stack Developer",
   description:
-    "Portfolio of Yash Kumar — Full Stack Developer, Open Source Contributor. Nexora AI, Brain-Dock, OWASP cve-lite-cli.",
+    "Portfolio of Yash Kumar — Full Stack Developer, Open Source Contributor. Nexora AI, Maanak Mitra, Brain-Dock, OWASP cve-lite-cli.",
 };
 
 export default function RootLayout({
