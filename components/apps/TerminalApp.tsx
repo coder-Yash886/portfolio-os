@@ -131,6 +131,26 @@ export function TerminalApp() {
           />
         </form>
       </div>
+
+      {/* Quick command buttons for mobile & desktop */}
+      <div className="flex shrink-0 items-center gap-1.5 overflow-x-auto border-t border-black/30 bg-[#250019]/90 px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-white/35 shrink-0">
+          Run:
+        </span>
+        {["help", "projects", "skills", "experience", "contact", "clear"].map((cmd) => (
+          <button
+            key={cmd}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              runCommand(cmd);
+            }}
+            className="shrink-0 cursor-pointer rounded-md bg-white/10 px-2.5 py-1 text-xs text-white/85 transition-colors hover:bg-white/20 active:scale-95"
+          >
+            {cmd}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

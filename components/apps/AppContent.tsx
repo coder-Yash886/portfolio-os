@@ -145,36 +145,39 @@ function FilesApp() {
         {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       </button>
 
-      <nav
-        className="flex gap-1 overflow-x-auto border-b border-[color:var(--border-subtle)] bg-black/25 p-2 md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        aria-label="Portfolio sections"
-      >
-        {FILE_SECTIONS.map((label, i) => (
-          <button
-            key={label}
-            type="button"
-            onClick={() => setActive(i)}
-            className={`shrink-0 cursor-pointer rounded-lg px-3 py-2 text-xs transition-colors ${
-              i === active
-                ? "bg-[color:var(--accent)] font-medium text-[color:var(--accent-fg)]"
-                : "text-white/75 hover:bg-white/8"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+      {/* Mobile Top Section Bar & Compact Resume Button */}
+      <div className="flex shrink-0 items-center justify-between border-b border-[color:var(--border-subtle)] bg-black/35 px-2.5 py-2 md:hidden">
+        <nav
+          className="flex min-w-0 flex-1 gap-1 overflow-x-auto py-0.5 pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          aria-label="Portfolio sections"
+        >
+          {FILE_SECTIONS.map((label, i) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => setActive(i)}
+              className={`shrink-0 cursor-pointer rounded-lg px-3 py-1.5 text-xs transition-all ${
+                i === active
+                  ? "bg-[color:var(--accent)] font-semibold text-[color:var(--accent-fg)] shadow-sm shadow-[color:var(--accent)]/30"
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+        <a
+          href={profile.resumeUrl}
+          download="Yash_Kumar_Resume.pdf"
+          className="shrink-0 flex items-center gap-1.5 rounded-lg border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/15 px-2.5 py-1.5 text-xs font-semibold text-[color:var(--highlight)] transition-colors hover:bg-[color:var(--accent)]/25 active:scale-95"
+          title="Download Resume"
+        >
+          <DownloadIcon />
+          <span>Resume</span>
+        </a>
+      </div>
 
-      <a
-        href={profile.resumeUrl}
-        download="Yash_Kumar_Resume.pdf"
-        className="files-download-btn mx-2 mb-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-[color:var(--accent-fg)] md:hidden"
-      >
-        <DownloadIcon />
-        Download Resume
-      </a>
-
-      <div className="min-h-0 min-w-0 flex-1 overflow-auto p-4 sm:p-6 md:p-8">
+      <div className="min-h-0 min-w-0 flex-1 overflow-auto p-3.5 sm:p-6 md:p-8">
         <div key={active} className="files-section-enter">
           {active === 0 && <AboutSection />}
           {active === 1 && <ProjectsSection />}
@@ -189,64 +192,72 @@ function FilesApp() {
 
 function AboutSection() {
   return (
-    <div className="w-full max-w-3xl">
-      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-        About Me
-      </h1>
+    <div className="w-full max-w-3xl space-y-5 sm:space-y-6">
+      {/* Profile Header Card */}
+      <div className="flex flex-col gap-3.5 rounded-2xl border border-[color:var(--border-subtle)] bg-white/5 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
+        <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--accent)] to-[color:var(--highlight)] text-lg sm:text-xl font-bold text-black shadow-lg shadow-[color:var(--accent)]/20">
+          YK
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white sm:text-2xl">
+              {profile.fullName}
+            </h1>
+            <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-medium text-emerald-400">
+              ● Open to Roles
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-white/75 sm:text-sm">
+            {profile.education} · {profile.college}
+          </p>
+        </div>
+      </div>
 
-      <div className="mt-5 space-y-4 text-sm leading-relaxed text-white/75 sm:text-[15px]">
+      {/* Quick Stats Grid */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+        <div className="rounded-xl border border-white/8 bg-white/5 p-2.5 sm:p-3">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50">LeetCode</span>
+          <p className="mt-1 text-base sm:text-xl font-bold text-[color:var(--highlight)]">250+</p>
+          <span className="text-[10px] text-white/40">Problems Solved</span>
+        </div>
+        <div className="rounded-xl border border-white/8 bg-white/5 p-2.5 sm:p-3">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50">CodeChef</span>
+          <p className="mt-1 text-base sm:text-xl font-bold text-amber-400">2★ (1458)</p>
+          <span className="text-[10px] text-white/40">270+ Problems</span>
+        </div>
+        <div className="rounded-xl border border-white/8 bg-white/5 p-2.5 sm:p-3">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50">Open Source</span>
+          <p className="mt-1 text-base sm:text-xl font-bold text-cyan-400">17+ PRs</p>
+          <span className="text-[10px] text-white/40">OSRF & OWASP</span>
+        </div>
+        <div className="rounded-xl border border-white/8 bg-white/5 p-2.5 sm:p-3">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50">Academics</span>
+          <p className="mt-1 text-base sm:text-xl font-bold text-purple-400">{profile.cgpa}</p>
+          <span className="text-[10px] text-white/40">B.Tech CGPA</span>
+        </div>
+      </div>
+
+      {/* Bio text */}
+      <div className="space-y-3 text-xs leading-relaxed text-white/80 sm:text-sm">
         <p>{profile.about.intro}</p>
         <p>{profile.about.body}</p>
         <p>{profile.about.achievements}</p>
+      </div>
 
-        <div className="space-y-1.5 pt-2">
-          <p>
-            <span className="text-white/45">Email · </span>
-            <a
-              href={`mailto:${profile.email}`}
-              className="cursor-pointer text-[color:var(--accent)] hover:underline"
+      {/* Skills */}
+      <div className="rounded-2xl border border-[color:var(--border-subtle)] bg-white/5 p-3.5 sm:p-5">
+        <h2 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-white/50">
+          Core Technologies & Skills
+        </h2>
+        <div className="mt-2.5 sm:mt-3 flex flex-wrap gap-1.5 sm:gap-2">
+          {profile.skills.map((skill) => (
+            <span
+              key={skill}
+              className="rounded-lg border border-[color:var(--accent)]/30 bg-[color:var(--accent)]/10 px-2.5 py-1 text-xs font-medium text-[color:var(--highlight)] transition-colors hover:bg-[color:var(--accent)]/20"
             >
-              {profile.email}
-            </a>
-          </p>
-          <p>
-            <span className="text-white/45">GitHub · </span>
-            <a
-              href={profile.github}
-              target="_blank"
-              rel="noreferrer"
-              className="cursor-pointer text-[color:var(--accent)] hover:underline"
-            >
-              {profile.githubHandle}
-            </a>
-          </p>
-          <p>
-            <span className="text-white/45">LinkedIn · </span>
-            <a
-              href={profile.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="cursor-pointer text-[color:var(--accent)] hover:underline"
-            >
-              yash-kumar
-            </a>
-          </p>
-        </div>
-
-        <div className="pt-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-white/45 sm:text-sm">
-            Skills
-          </h2>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {profile.skills.map((skill) => (
-              <span
-                key={skill}
-                className="rounded-md border border-[color:var(--border-subtle)] bg-white/5 px-2.5 py-1 text-xs text-white/80"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
+              {skill}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -263,33 +274,42 @@ function ProjectsSection() {
         <button
           type="button"
           onClick={() => setSelected(null)}
-          className="mb-5 flex cursor-pointer items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+          className="mb-4 sm:mb-5 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white active:scale-95"
         >
           <span aria-hidden>←</span> Back to Projects
         </button>
-        <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          {project.name}
-        </h1>
-        <p className="mt-4 text-sm leading-relaxed text-white/70 sm:text-[15px]">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <h1 className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-white sm:text-3xl">
+            {project.name}
+          </h1>
+          {project.liveUrl && (
+            <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+              ● Live Demo
+            </span>
+          )}
+        </div>
+        <p className="mt-3 sm:mt-4 text-xs leading-relaxed text-white/75 sm:text-sm">
           {project.description}
         </p>
-        <h2 className="mt-6 text-sm font-semibold text-white sm:text-base">Tech Stack</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <h2 className="mt-5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-white/50">
+          Tech Stack
+        </h2>
+        <div className="mt-2.5 flex flex-wrap gap-1.5 sm:gap-2">
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-[color:var(--accent)]/20 px-3 py-1 text-xs text-[color:var(--highlight)] sm:text-sm"
+              className="rounded-full border border-[color:var(--accent)]/30 bg-[color:var(--accent)]/15 px-2.5 py-0.5 text-xs font-medium text-[color:var(--highlight)]"
             >
               {tag}
             </span>
           ))}
         </div>
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-5 sm:mt-6 flex flex-wrap gap-2.5 sm:gap-3">
           <a
             href={project.github}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[color:var(--accent)] px-4 py-2.5 text-sm font-semibold text-[color:var(--accent-fg)] hover:opacity-90"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[color:var(--accent)] px-3.5 py-2 text-xs font-semibold text-[color:var(--accent-fg)] shadow-md shadow-[color:var(--accent)]/20 hover:opacity-90 active:scale-95 sm:px-4 sm:py-2.5 sm:text-sm"
           >
             <GitHubIcon />
             View Code
@@ -299,7 +319,7 @@ function ProjectsSection() {
               href={project.liveUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[color:var(--highlight)] hover:bg-[color:var(--accent)]/20"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-3.5 py-2 text-xs font-semibold text-[color:var(--highlight)] transition-colors hover:bg-[color:var(--accent)]/20 active:scale-95 sm:px-4 sm:py-2.5 sm:text-sm"
             >
               <ExternalIcon />
               Live Demo
@@ -312,20 +332,29 @@ function ProjectsSection() {
 
   return (
     <div className="w-full">
-      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-        Projects
-      </h1>
-      <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+      <div className="mb-4">
+        <h1 className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-white sm:text-3xl">
+          Projects
+        </h1>
+        <p className="mt-1 text-xs text-white/50">
+          Click any project to inspect full architecture, tech stack & links
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 sm:gap-4">
         {profile.projects.map((item) => (
           <button
             key={item.slug}
             type="button"
             onClick={() => setSelected(item.slug)}
-            className="group flex cursor-pointer flex-col items-center gap-2 text-center transition-transform hover:scale-[1.03]"
+            className="group flex cursor-pointer flex-col items-center rounded-2xl border border-white/8 bg-white/5 p-3 text-center transition-all duration-200 hover:border-[color:var(--accent)]/40 hover:bg-white/10 hover:scale-[1.02] active:scale-95"
           >
             <FolderIcon />
-            <span className="max-w-full truncate px-1 text-xs text-white/85 group-hover:text-white sm:text-sm">
+            <span className="mt-2 max-w-full font-medium truncate px-1 text-xs text-white/90 group-hover:text-white sm:text-sm">
               {item.folderLabel}
+            </span>
+            <span className="mt-0.5 text-[10px] text-white/40 group-hover:text-[color:var(--highlight)]">
+              {item.tags[0]}
             </span>
           </button>
         ))}
@@ -524,58 +553,62 @@ function ChevronRightIcon() {
 }
 
 function ContactSection() {
+  const contacts = [
+    { label: "Email", value: profile.email, href: `mailto:${profile.email}`, action: "Send Email" },
+    { label: "Phone", value: profile.phone, href: `tel:${profile.phone}`, action: "Call" },
+    { label: "GitHub", value: profile.githubHandle, href: profile.github, action: "View GitHub" },
+    { label: "LinkedIn", value: "yash-kumar", href: profile.linkedin, action: "Connect" },
+    { label: "LeetCode", value: "coder-Yash886", href: profile.leetcode, action: "Profile" },
+    { label: "CodeChef", value: "coder_yash886 (2★)", href: profile.codechef, action: "Profile" },
+  ];
+
   return (
-    <div className="w-full max-w-2xl">
-      <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-        Contact
-      </h1>
-      <div className="mt-5 space-y-3 text-sm sm:mt-6 sm:text-[15px]">
-        <p className="break-all">
-          <span className="text-white/45">Email · </span>
-          <a href={`mailto:${profile.email}`} className="cursor-pointer text-[color:var(--accent)] hover:underline">
-            {profile.email}
+    <div className="w-full max-w-2xl space-y-4 sm:space-y-5">
+      <div>
+        <h1 className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-white sm:text-3xl">
+          Get In Touch
+        </h1>
+        <p className="mt-1 text-xs text-white/50 sm:text-sm">
+          Feel free to reach out for software engineering roles, hackathons, or open-source collaborations.
+        </p>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
+        {contacts.map((c) => (
+          <a
+            key={c.label}
+            href={c.href}
+            target={c.href.startsWith("http") ? "_blank" : undefined}
+            rel={c.href.startsWith("http") ? "noreferrer" : undefined}
+            className="group flex items-center justify-between rounded-xl border border-white/8 bg-white/5 p-3 transition-all hover:border-[color:var(--accent)]/40 hover:bg-white/10 active:scale-95"
+          >
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                {c.label}
+              </span>
+              <p className="text-xs font-medium text-white/90 group-hover:text-[color:var(--highlight)] sm:text-sm">
+                {c.value}
+              </p>
+            </div>
+            <span className="rounded-lg bg-white/5 px-2 py-1 text-[11px] text-white/60 transition-colors group-hover:bg-[color:var(--accent)]/20 group-hover:text-white">
+              {c.action} →
+            </span>
           </a>
-        </p>
-        <p className="break-all">
-          <span className="text-white/45">Phone · </span>
-          <a href={`tel:${profile.phone}`} className="cursor-pointer text-white/80 hover:underline">
-            {profile.phone}
-          </a>
-        </p>
-        <p className="break-all">
-          <span className="text-white/45">GitHub · </span>
-          <a href={profile.github} target="_blank" rel="noreferrer" className="cursor-pointer text-[color:var(--accent)] hover:underline">
-            {profile.githubHandle}
-          </a>
-        </p>
-        <p className="break-all">
-          <span className="text-white/45">LinkedIn · </span>
-          <a href={profile.linkedin} target="_blank" rel="noreferrer" className="cursor-pointer text-[color:var(--accent)] hover:underline">
-            yash-kumar
-          </a>
-        </p>
-        <p className="break-all">
-          <span className="text-white/45">LeetCode · </span>
-          <a href={profile.leetcode} target="_blank" rel="noreferrer" className="cursor-pointer text-[color:var(--accent)] hover:underline">
-            coder-Yash886
-          </a>
-        </p>
-        <p className="break-all">
-          <span className="text-white/45">CodeChef · </span>
-          <a href={profile.codechef} target="_blank" rel="noreferrer" className="cursor-pointer text-[color:var(--accent)] hover:underline">
-            coder_yash886
-          </a>
-        </p>
-        <p className="break-all">
-          <span className="text-white/45">Location · </span>
-          <span className="text-white/80">{profile.location}</span>
-        </p>
+        ))}
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-[color:var(--border-subtle)] bg-[color:var(--accent)]/10 p-3.5 sm:p-4">
+        <div>
+          <p className="text-xs sm:text-sm font-semibold text-white">Looking for Yash's full resume?</p>
+          <p className="text-[11px] text-white/60">Updated with latest projects, OSRF contributions & skills</p>
+        </div>
         <a
           href={profile.resumeUrl}
           download="Yash_Kumar_Resume.pdf"
-          className="files-download-btn mt-4 inline-flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm font-semibold text-[color:var(--accent-fg)] hover:opacity-90"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[color:var(--accent)] px-3.5 py-2 text-xs font-semibold text-[color:var(--accent-fg)] shadow-md shadow-[color:var(--accent)]/20 hover:opacity-90 active:scale-95"
         >
-          View Resume (PDF)
+          <DownloadIcon />
+          Download PDF
         </a>
       </div>
     </div>

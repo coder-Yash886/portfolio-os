@@ -27,7 +27,7 @@ export function TopBar() {
   const trayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 639px)");
+    const mq = window.matchMedia("(max-width: 767px)");
     const update = () => setShortClock(mq.matches);
     update();
     mq.addEventListener("change", update);

@@ -27,7 +27,7 @@ export function Dock() {
       {/* Desktop: Left-side Vertical Dock */}
       <aside
         aria-label="Application dock"
-        className="pointer-events-auto fixed left-0 top-8 bottom-0 z-50 hidden sm:flex w-18 md:w-20 flex-col items-center py-3.5 space-y-2 border-r border-white/10 bg-[#16171d]/90 backdrop-blur-xl shadow-[8px_0_30px_rgba(0,0,0,0.5)] select-none"
+        className="pointer-events-auto fixed left-0 top-8 bottom-0 z-50 hidden md:flex w-18 md:w-20 flex-col items-center py-3.5 space-y-2 border-r border-white/10 bg-[#16171d]/90 backdrop-blur-xl shadow-[8px_0_30px_rgba(0,0,0,0.5)] select-none"
       >
         <div className="flex flex-col items-center gap-2.5 w-full px-2">
           {DOCK_ORDER.map((appId) => {
@@ -93,21 +93,29 @@ export function Dock() {
       {/* Mobile: Bottom Floating Dock */}
       <nav
         aria-label="Application dock mobile"
-        className="pointer-events-auto fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex sm:hidden max-w-[calc(100dvw-1rem)] items-center gap-1.5 overflow-x-auto rounded-2xl border border-white/15 bg-[#16171d]/90 px-2 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="pointer-events-auto fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex md:hidden max-w-[calc(100dvw-1rem)] items-center gap-1 overflow-x-auto rounded-2xl border border-white/15 bg-[#16171d]/90 px-2 py-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.7)] backdrop-blur-2xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}
       >
         {DOCK_ORDER.map((appId) => {
           const app = APPS[appId];
           const isRunning = running.has(appId);
+          const isFocused = windows.find((w) => w.id === focusedId && !w.minimized)?.appId === appId;
           return (
             <button
               key={appId}
               type="button"
               onClick={() => openApp(appId)}
               title={app.dockLabel}
-              className="relative flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl active:scale-90"
+              aria-label={app.dockLabel}
+              className={`relative flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl transition-all active:scale-90 ${
+                isFocused
+                  ? "bg-white/20 ring-1 ring-white/30 shadow-md"
+                  : isRunning
+                    ? "bg-white/5"
+                    : "hover:bg-white/10"
+              }`}
             >
-              <span className="flex h-8 w-8 items-center justify-center">
+              <span className="flex h-7 w-7 items-center justify-center">
                 {ICONS[appId]}
               </span>
               <span
@@ -118,6 +126,15 @@ export function Dock() {
             </button>
           );
         })}
+        <button
+          type="button"
+          onClick={() => openApp("store")}
+          title="Show Applications"
+          aria-label="Show Applications"
+          className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-90"
+        >
+          <UbuntuIcon />
+        </button>
       </nav>
     </>
   );

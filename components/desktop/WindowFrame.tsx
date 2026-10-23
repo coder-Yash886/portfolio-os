@@ -31,7 +31,17 @@ export function WindowFrame({ window: win, children }: Props) {
 
   const maximizedInsets = isMaximized ? getMaximizedInsets() : null;
 
-  const style: React.CSSProperties = isMaximized
+  const style: React.CSSProperties = isMobile
+    ? {
+        left: 8,
+        right: 8,
+        top: 38,
+        bottom: 74,
+        width: "auto",
+        height: "auto",
+        zIndex: win.zIndex,
+      }
+    : isMaximized
     ? {
         left: maximizedInsets!.left,
         top: maximizedInsets!.top,
@@ -103,63 +113,53 @@ export function WindowFrame({ window: win, children }: Props) {
       aria-label={win.title}
       onMouseDown={() => focusWindow(win.id)}
       className={`pointer-events-auto absolute flex flex-col overflow-hidden shadow-2xl transition-[box-shadow] ${
-        isMobile ? "rounded-lg" : "rounded-xl"
+        isMobile ? "rounded-2xl" : "rounded-xl"
       } border ${
         isFocused
-          ? "border-[color:var(--accent)]/25 shadow-[0_24px_80px_rgba(0,0,0,0.65)]"
+          ? "border-[color:var(--accent)]/30 shadow-[0_24px_80px_rgba(0,0,0,0.7)] ring-1 ring-[color:var(--accent)]/20"
           : "border-[color:var(--border-subtle)] opacity-[0.97]"
-      } bg-[color:var(--window)]`}
+      } bg-[color:var(--window)] backdrop-blur-xl`}
       style={style}
     >
       <header
         onPointerDown={onPointerDownTitle}
         onPointerMove={onPointerMoveTitle}
         onPointerUp={onPointerUpTitle}
-        className={`relative z-10 flex shrink-0 items-center justify-between border-b border-[color:var(--border-subtle)] bg-[color:var(--window-title)] px-2 sm:px-3 ${
+        className={`relative z-10 flex shrink-0 items-center justify-between border-b border-[color:var(--border-subtle)] bg-[color:var(--window-title)] px-2.5 sm:px-3 ${
           isMobile ? "h-11 cursor-default" : "h-10 cursor-grab active:cursor-grabbing"
         }`}
       >
-        <div className="flex min-w-0 items-center gap-2 text-xs font-medium text-white/90 sm:text-sm">
-          <span className="h-2 w-2 shrink-0 rounded-full bg-[color:var(--accent)]" />
-          <span className="truncate">{win.title}</span>
+        <div className="flex min-w-0 items-center gap-2 text-xs font-semibold text-white/95 sm:text-sm">
+          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+          <span className="truncate tracking-wide">{win.title}</span>
         </div>
-        <div className="flex shrink-0 items-center gap-0.5 rounded-lg bg-black/20 p-0.5 sm:gap-1">
-          {!isMobile && (
-            <button
-              type="button"
-              aria-label="Minimize"
-              onClick={() => minimizeWindow(win.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-white/80 hover:bg-white/15"
-            >
-              <MinimizeIcon />
-            </button>
-          )}
+        <div className="flex shrink-0 items-center gap-1 rounded-lg bg-black/30 p-1">
+          <button
+            type="button"
+            aria-label="Minimize"
+            onClick={() => minimizeWindow(win.id)}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-white/15 hover:text-white active:scale-95"
+            title="Minimize"
+          >
+            <MinimizeIcon />
+          </button>
           {!isMobile && (
             <button
               type="button"
               aria-label={isMaximized ? "Restore" : "Maximize"}
               onClick={() => toggleMaximize(win.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-white/80 hover:bg-white/15"
+              className="flex h-7 w-7 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-white/15 hover:text-white"
+              title={isMaximized ? "Restore" : "Maximize"}
             >
               {isMaximized ? <RestoreIcon /> : <MaximizeIcon />}
-            </button>
-          )}
-          {isMobile && (
-            <button
-              type="button"
-              onClick={() => closeWindow(win.id)}
-              className="mr-1 flex h-8 items-center justify-center rounded-lg bg-red-500/90 px-3 text-xs font-semibold text-white hover:bg-red-500"
-            >
-              Close
             </button>
           )}
           <button
             type="button"
             aria-label="Close"
             onClick={() => closeWindow(win.id)}
-            className={`flex items-center justify-center rounded-md text-white/80 hover:bg-red-500/80 hover:text-white ${
-              isMobile ? "h-9 w-9" : "h-7 w-7"
-            }`}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-red-500 hover:text-white active:scale-95"
+            title="Close"
           >
             <CloseIcon />
           </button>
