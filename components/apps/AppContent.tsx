@@ -444,6 +444,21 @@ function ContributionsSection() {
               </a>
             </div>
             <p className="mt-2 text-sm leading-relaxed text-white/60">{item.description}</p>
+            {"prs" in item && Array.isArray(item.prs) ? (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {item.prs.map((pr: { label: string; url: string }) => (
+                  <a
+                    key={pr.url}
+                    href={pr.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex cursor-pointer items-center rounded-md border border-[color:var(--accent)]/30 bg-[color:var(--accent)]/10 px-2 py-0.5 text-xs font-medium text-[color:var(--highlight)] transition-colors hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--accent)]/20"
+                  >
+                    {pr.label}
+                  </a>
+                ))}
+              </div>
+            ) : null}
             <a
               href={item.prUrl}
               target="_blank"
@@ -451,7 +466,7 @@ function ContributionsSection() {
               className="mt-3 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[color:var(--highlight)] hover:underline"
             >
               <LinkIcon />
-              View PR{item.repo.includes("cve-lite") ? "s" : ""}
+              View PR{item.prUrl.includes("pulls?") ? "s" : ""}
             </a>
           </article>
         ))}

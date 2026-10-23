@@ -38,7 +38,7 @@ export const profile = {
     intro:
       "Hey! I am Yash. I am a 3rd-year B.Tech CSIT student at Ajay Kumar Garg Engineering College, with hands-on experience in backend and full-stack development.",
     body:
-      "I've built projects like Nexora AI, an AI-powered video meeting platform, Maanak Mitra, an AI compliance copilot for Indian Standards, and Brain-Dock, a full-stack content management platform. I've also contributed to OWASP's cve-lite-cli and built scalable Node.js/Express APIs supporting 200+ concurrent participants.",
+      "I've built projects like Nexora AI, an AI-powered video meeting platform, Maanak Mitra, an AI compliance copilot for Indian Standards, and Brain-Dock, a full-stack content management platform. I've also contributed to OSRF's homebrew-simulation, OWASP's cve-lite-cli, and built scalable Node.js/Express APIs supporting 200+ concurrent participants.",
     achievements:
       "I've solved 250+ LeetCode problems, 270+ CodeChef problems, and achieved a 2★ CodeChef rating (1458).",
     closing:
@@ -190,6 +190,18 @@ export const profile = {
     },
     {
       role: "Open Source Contributor",
+      org: "OSRF",
+      orgUrl: "https://github.com/osrf/homebrew-simulation",
+      period: "Sep 2026 — Present",
+      location: "Remote",
+      points: [
+        "Contributed to osrf/homebrew-simulation tap maintaining Gazebo robotics simulation formulas.",
+        "Implemented CI customization methods (ci_cmake_args, ci_pip_packages) adopted by gazebo-tooling release-tools.",
+        "Resolved display server test sandbox failures and segfaults for gz-gui and gz-rendering formulas under Homebrew 7.0.0.",
+      ],
+    },
+    {
+      role: "Open Source Contributor",
       org: "OWASP",
       orgUrl: "https://github.com/OWASP",
       period: "May 2025 — Present",
@@ -202,6 +214,19 @@ export const profile = {
     },
   ],
   contributions: [
+    {
+      repo: "osrf/homebrew-simulation",
+      url: "https://github.com/osrf/homebrew-simulation",
+      prUrl:
+        "https://github.com/osrf/homebrew-simulation/pulls?q=is%3Apr+author%3Acoder-Yash886+is%3Aclosed",
+      description:
+        "3 merged PRs (#3574, #3573, #3572) — Added CI customization methods (ci_cmake_args, ci_pip_packages) to simulation formulas, and resolved Homebrew 7.0.0 sandbox test failures/segfaults for gz-gui and gz-rendering.",
+      prs: [
+        { label: "PR #3574 (CI Methods)", url: "https://github.com/osrf/homebrew-simulation/pull/3574" },
+        { label: "PR #3573 (gz-gui sandbox)", url: "https://github.com/osrf/homebrew-simulation/pull/3573" },
+        { label: "PR #3572 (gz-rendering sandbox)", url: "https://github.com/osrf/homebrew-simulation/pull/3572" },
+      ],
+    },
     {
       repo: "OWASP/cve-lite-cli",
       url: "https://github.com/OWASP/cve-lite-cli",
